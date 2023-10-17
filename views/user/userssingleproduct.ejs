@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheet/otpmodal.css">
+    <link rel="stylesheet" href="/stylesheet/button.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.rawgit.com/igorlino/elevatezoom-plus/1.1.6/src/jquery.ez-plus.js"></script>
+    <title>
+        <%= product.name %>
+    </title>
+
+</head>
+<% console.log(product.imageUrl); %>
+
+    <body class="bg-white-200">
+        <header>
+            <%- include('../partial/userheader.ejs') %>
+                <hr class="dark-line">
+        </header>
+
+
+        <section class="py-5">
+            <div class="container mx-auto px-4">
+                <h2 class="text-xl font-semibold mb-4">Product Details</h2>
+
+                <!-- Flex container for three columns -->
+                <div class="flex flex-wrap">
+                    <!-- First Column -->
+                    <div class="w-full md:w-1/3 md:pr-4">
+                        <!-- Product Images -->
+                        <div id="thumbnailImages" class=" w-14">
+                            <div class="thumbnail mb-3">
+                                <img src="<%= product.imageUrl[3] %>" alt="Product Image 1">
+                            </div>
+                            <div class="thumbnail mb-3">
+                                <img src="<%= product.imageUrl[2] %>" alt="Product Image 2">
+                            </div>
+                            <div class="thumbnail mb-3">
+                                <img src="<%= product.imageUrl[1] %>" alt="Product Image 3">
+                            </div>
+                            <div class="thumbnail mb-3">
+                                <img src="<%= product.imageUrl[0] %>" alt="Product Image 4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Second Column -->
+                    <div style="margin-left: -10rem; margin-right: 5rem;" class="w-full md:w-1/3 md:px-2">
+                        <!-- Product Image -->
+                        <div id="productView" class=" md:w-1/1">
+                            <%= console.log('html image div:', count); %>
+                                <div class="bg-slate-50">
+                                    <img id="mainImage" src="<%= product.imageUrl[3] %>" alt="<%= product.name %>"
+                                        class="mainImage zoom-img w-full rounded-lg shadow-md"
+                                        data-zoom-image="<%= product.imageUrl[count].replace(/\\/g, '/') %>">
+                                </div>
+                        </div>
+                    </div>
+
+                    <!-- Third Column -->
+                    <div class="w-full md:w-1/3 md:pl-4">
+                        <!-- Product Description -->
+                        <div class="mb-4">
+                            <h3 class="text-lg font-semibold mb-2">
+                                <%= product.name %>
+                            </h3>
+                            <p class="text-gray-600 mb-2">
+                                <%= product.description %>
+                            </p>
+                            <hr class="mt-3 mb-3">
+
+                            <div class="mb-2">
+                                <span class="text-lg font-semibold text-blue-700">
+                                    <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                        }).format(product.price) %>
+                                </span>
+                                <!-- Add discount price if applicable -->
+                                <del class="text-gray-500 ml-2">$129.99</del>
+                            </div>
+
+
+
+                            <!-- Add to Cart Button -->
+                            <% if (user) { %>
+                                <button>
+                                    <a href="/addtocart/<%= user._id %>/<%= product._id %>"
+                                        class="flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        Add to cart
+                                    </a>
+                                </button>
+                                <% } else { %>
+                                    <button data-modal-target="authentication-modal"
+                                        data-modal-toggle="authentication-modal">
+                                        <a href="#"
+                                            class="flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                            Add to cart
+                                        </a>
+                                    </button>
+                                    <% } %>
+
+                                        <button>
+                                            <a href="/buyNow?productId=<%= product._id %>"
+                                                class="flex items-center rounded-md bg-blue-500 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                </svg>
+                                                Buy now
+                                            </a>
+                                        </button>
+                        </div>
+                        <hr class="mt-3 mb-3">
+
+                        <!-- Additional Product Information -->
+                        <div class="mt-4">
+                            <h3 class="text-lg font-semibold mb-2">Product Details</h3>
+                            <ul class="list-disc pl-6">
+                                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+                                <li>Nulla gravida mauris vel ex pretium lacinia.</li>
+                                <li>Product feature 1.</li>
+                                <li>Product feature 2.</li>
+                                <li>Product feature 1.</li>
+                                <li>Product feature 2.</li>
+                                <li>Product feature 1.</li>
+                                <li>Product feature 2.</li> 
+                                <!-- Add more details as needed -->
+                            </ul>
+                        </div>
+                        <hr class="mt-3 mb-3">
+
+                        <div class="flex items-center mb-2">
+                            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                <path
+                                    d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                <path
+                                    d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                <path
+                                    d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                <path
+                                    d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-gray-300 mr-1" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                <path
+                                    d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                            <p class="ml-2 text-sm font-medium text-gray-900">4.95 out of 5</p>
+                        </div>
+                        <p class="text-sm font-medium text-gray-500">1,745 global ratings</p>
+                        <div class="flex items-center mt-4">
+                            <a href="#" class="text-sm font-medium text-blue-600 hover:underline">5 star</a>
+                            <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
+                                <div class="h-5 bg-yellow-300 rounded" style="width: 70%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-500">70%</span>
+                        </div>
+                        <div class="flex items-center mt-4">
+                            <a href="#" class="text-sm font-medium text-blue-600 hover:underline">4 star</a>
+                            <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
+                                <div class="h-5 bg-yellow-300 rounded" style="width: 17%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-500">17%</span>
+                        </div>
+                        <div class ="flex items-center mt-4">
+                            <a href="#" class="text-sm font-medium text-blue-600 hover:underline">3 star</a>
+                            <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
+                                <div class="h-5 bg-yellow-300 rounded" style="width: 8%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-500">8%</span>
+                        </div>
+                        <div class ="flex items-center mt-4">
+                            <a href="#" class="text-sm font-medium text-blue-600 hover:underline">2 star</a>
+                            <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
+                                <div class ="h-5 bg-yellow-300 rounded" style="width: 4%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-500">4%</span>
+                        </div>
+                        <div class ="flex items-center mt-4">
+                            <a href="#" class="text-sm font-medium text-blue-600 hover:underline">1 star</a>
+                            <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
+                                <div class="h-5 bg-yellow-300 rounded" style="width: 1%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-500">1%</span>
+                        </div>
+                        
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div id="toast-success"
+            class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-xs p-4 mb-4 text-gray-800 bg-white rounded-lg shadow-lg transition-transform transform -translate-y-full hidden"
+            role="alert" style="left: 50%; max-width: 30vw; transform: translateX(-50%);">
+
+            <div class="flex justify-start h-10">
+                <img src="https://img.icons8.com/?size=120&id=OufAkXXgnETU&format=png" alt="w">
+                <div class="ml-3 mt-2 text-sm font-normal">Item added to cart.</div>
+            </div>
+
+        </div>
+
+    </body>
+
+    <script>
+        window.onload = () => {
+            setTimeout(() => {
+                fetch('/falser', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // You can include other headers if needed
+                    },
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Request was successful
+                            console.log('Request to /falser was successful');
+                        } else {
+                            // Handle errors here
+                            console.error('Error making request to /falser');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }, 1000); // 1 second delay
+        };
+    </script>
+
+    <script>
+        const showToastButton = document.getElementById('show-toast-button');
+        const toastSuccess = document.getElementById('toast-success');
+
+        function yourOnclickFunction() {
+            // Show the toast message
+            toastSuccess.classList.remove('hidden');
+            toastSuccess.classList.add('translate-y-full');
+
+            // Automatically hide the toast after a delay (e.g., 2000 milliseconds)
+            setTimeout(() => {
+                toastSuccess.classList.remove('translate-y-full');
+                toastSuccess.classList.add('hidden');
+            }, 2000);
+        }
+    </script>
+
+    <% if ( toast ) { %>
+        <script>
+            yourOnclickFunction()
+        </script>
+        <% } %>
+
+            <script>
+                $("#mainImage").ezPlus();
+            </script>
+            <script src="/javascript/modal.js"></script>
+            <script src="/javascript/modal2.js"></script>
+            <script src="/javascript/modalotp.js"></script>
+            <script src="/javascript/banner.js"></script>
+            <script src="/javascript/otptimer.js"></script>
+            <script>
+                function openOTPVerificationModal() {
+                    const otpModal = document.getElementById('otp-verification-modal');
+                    otpModal.style.display = 'block';
+                }
+
+                function closeOTPVerificationModal() {
+                    const otpModal = document.getElementById('otp-verification-modal');
+                    otpModal.style.display = 'none';
+                }
+
+                function verifyOTP() {
+                    closeOTPVerificationModal();
+                }
+            </script>
+
+            <script>
+                // Get references to the main image and thumbnail images
+                var mainImage = document.getElementById("mainImage");
+                var thumbnailImages = document.querySelectorAll(".thumbnail");
+
+                // Add a click event listener to each thumbnail image
+                thumbnailImages.forEach((thumbnail, index) => {
+                    thumbnail.addEventListener("click", function () {
+
+                        count = index;
+
+                        // Update the src and data-zoom-image attributes of the main image
+                        mainImage.src = thumbnail.children[0].src.replace('http://localhost:7000/', '')
+                        console.log('here', mainImage.src);
+                        mainImage.removeAttribute("data-zoom-image")
+                        mainImage.setAttribute("data-zoom-image", thumbnail.children[0].src.replace('http://localhost:7000/', ''));
+                        console.log("Updated currentIndex:", count);
+                    });
+                });
+            </script>
+            <% if (user) { %>
+                <script>
+                    // Set the global user variable with the user's _id
+
+                    var user = {
+                        _id: '<%= user._id %>'
+                    };
+                </script>
+                <% } %>
+
+</html>

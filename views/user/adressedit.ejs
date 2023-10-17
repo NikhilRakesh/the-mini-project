@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>editAddress</title>
+</head>
+<body>
+
+    <header>
+        <%- include('../partial/userheader.ejs') %>
+    </header>
+
+    <form action="/updateadress" method="POST"> <!-- Set the appropriate action and method -->
+        <input type="hidden" name="addressId" value="<%=addressToEdit._id %>"> <!-- Hidden input to store the address ID -->
+      
+        <div class="mb-4">
+          <label for="street" class="block font-semibold mb-2">Street:</label>
+          <input type="text" id="street" name="street" value="<%=addressToEdit.street  %>"
+                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+                 required>
+        </div>
+      
+        <div class="mb-4">
+          <label for="city" class="block font-semibold mb-2">City:</label>
+          <input type="text" id="city" name="city" value="<%=addressToEdit.city  %>"
+                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+                 required>
+        </div>
+      
+        <div class="mb-4">
+          <label for="state" class="block font-semibold mb-2">State:</label>
+          <input type="text" id="state" name="state" value="<%= addressToEdit.state %>"
+                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+                 required>
+        </div>
+      
+        <div class="mb-4">
+          <label for="postalCode" class="block font-semibold mb-2">Postal Code:</label>
+          <input type="text" id="postalCode" name="postalCode" value="<%= addressToEdit.postalCode %>"
+                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+                 required>
+        </div>
+      
+        <div class="mb-4">
+          <label for="country" class="block font-semibold mb-2">Country:</label>
+          <input type="text" id="country" name="country" value="<%= addressToEdit.country %>"
+                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+                 required>
+        </div>
+      
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save Address</button>
+      </form>
+      
+      
+      
+    
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>orders</title>
+</head>
+
+<header>
+    <%- include('../partial/adminheader.ejs') %>
+</header>
+
+<body>
+
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Image</span>
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Product
+                    </th>
+                    <th scope="col" class="px-6 py-3">     
+                        Qty
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Price
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Date
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Status
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% console.log('orders',orders); %>
+                <% orders.forEach(order=> { %>
+                    <% console.log('imageurls',orders.products); %>
+                        <% order.products.forEach(product=> { %>
+                            <tr
+                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td class="w-32 p-4">
+                                    <img src="<%= product.imageUrl[3] %>" alt="Apple Watch">
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                    <%= product.productName %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center space-x-3">
+                                        
+                                        <div>
+                                            <input type="number" id="first_product"
+                                                class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder=" <%= product.quantity %>" required>
+                                        </div>
+                                        
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                    <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.price) %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <%= order.orderDate.toISOString().split('T')[0] %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <%= order.customerName %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <%= order.status %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+
+</body>
+
+</html>

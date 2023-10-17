@@ -1,0 +1,16 @@
+  /* Custom styles for the banner */
+  .slider-container {
+    overflow: hidden;
+    max-width: 100%;
+    position: relative;
+}
+
+.slider-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+    flex: 1;
+}

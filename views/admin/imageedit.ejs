@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Editor</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<header>
+    <%- include('../partial/adminheader.ejs') %>
+</header>
+
+
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto p-4">
+        <!-- Header -->
+        <h1 class="text-2xl font-semibold mb-4">Image Editor</h1>
+
+        <!-- Image Cropper -->
+        <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+            <!-- Image Display -->
+            <div class="max-w-full h-auto mb-4">
+                <img id="imageToCrop" src="<%= imageurl %>" alt="Image to Crop">
+            </div>
+            <!-- Crop Controls -->
+            <div>
+                <button id="cropButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-800">Crop</button>
+                <button id="rotateButton" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 dark:bg-green-800">Rotate</button>
+                <button id="resetButton" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 dark:bg-gray-700">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include JavaScript for image cropping (e.g., Cropper.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+</body>
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageToCrop = document.getElementById('imageToCrop');
+        const cropper = new Cropper(imageToCrop, {
+            aspectRatio: 16 / 9, // Set your desired aspect ratio
+            viewMode: 1, // Set your desired view mode
+        });
+
+        // Crop the image when the "Crop" button is clicked
+        document.getElementById('cropButton').addEventListener('click', function () {
+            cropper.getCroppedCanvas().toBlob((blob) => {
+                // Handle the cropped image blob here (e.g., send it to the server).
+            });
+        });
+
+        // Rotate the image when the "Rotate" button is clicked
+        document.getElementById('rotateButton').addEventListener('click', function () {
+            cropper.rotate(90);
+        });
+
+        // Reset the image when the "Reset" button is clicked
+        document.getElementById('resetButton').addEventListener('click', function () {
+            cropper.reset();
+        });
+    });
+</script> -->
+
+</html>

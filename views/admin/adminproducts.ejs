@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/dist/output.css" rel="stylesheet">
+    <title>Document</title>
+</head>
+<style>
+   /* Custom CSS class for text truncation with extended max-width */
+.truncate-text {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+</style>
+
+<header>
+    <%- include('../partial/adminheader.ejs') %>
+</header>
+
+
+<section class="mt-10">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+
+        <div class="flex justify-between items-center mb-4 px-4">
+            <!-- Search Bar -->
+            <input id="search" type="text" placeholder="Search Products"
+                class="block w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 w-1/2 dark:text-white" />
+            <!-- Add Product Button -->
+            <button type="button" onclick="openAddProductModal()"
+                class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Add Product
+            </button>
+        </div>
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <caption
+                class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                Our products
+            </caption>
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Product name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Color
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Category
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Price
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Edit</span>
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        delete
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% products.forEach(function(product) { %>
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <th scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap w-48 dark:text-white truncate-text">
+                            <%= product.name %>
+                        </th>
+                        <td class="px-6 py-4">
+                            <%= product.color %>
+                        </td>
+                        <td class="px-6 py-4">
+                            <%= product.category %>
+                        </td>
+                        <td class="px-6 py-4">
+                            <%= product.price %>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="/productedit?id=<%= product._id %>"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="/productdelete?id=<%= product._id %>"
+                                class="font-medium text-red-600 dark:text-red-500 hover:underline">delete</a>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+<body class="bg-white text-white dark:bg-gray-900 dark:text-white">
+    <!-- Add Product Modal -->
+    <div id="add-product-modal"
+        class="fixed inset-0 flex items-center justify-center z-50 hidden bg-gray-900 bg-opacity-50">
+        <div class="bg-gray-800 p-4 w-full max-w-md mx-auto rounded-lg shadow-lg relative">
+            <!-- Close Modal Button -->
+            <button type="button" onclick="closeAddProductModal()"
+                class="absolute top-2 right-2 text-gray-300 bg-transparent hover:bg-gray-600 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+                <!-- Close button icon here -->
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+            </button>
+            <!-- Modal Content -->
+            <div class="text-center">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-200">Add Product</h2>
+            </div>
+            <form class="space-y-4" action="/addproduct" method="post" enctype="multipart/form-data">
+                <!-- Product Name -->
+                <div>
+                    <label for="product-name" class="block mb-2 text-sm font-medium text-white-900">Product
+                        Name</label>
+                    <input type="text" name="name" id="product-name"
+                        class="w-full  p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <!-- Description -->
+                <div>
+                    <label for="product-description"
+                        class="block mb-2 text-sm font-medium text-white-900">Description</label>
+                    <textarea name="description" id="product-description"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                </div>
+                <!-- Price -->
+                <div>
+                    <label for="product-price" class="block mb-2 text-sm font-medium text-white-900">Price</label>
+                    <input type="number" name="price" id="product-price"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <!-- Category -->
+                <div>
+                    <label for="product-category" class="block mb-2 text-sm font-medium text-white-900">Category</label>
+                    <select name="category" id="product-category"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <!-- Add dropdown options here -->
+                        <% categories.forEach(function(category) { %>
+                            <option value=<%=category.name %>><%= category.name %>
+                            </option>
+                            <% }); %>
+                                <!-- Add more categories as needed -->
+                    </select>
+                </div>
+
+                <!-- Color -->
+                <div>
+                    <label for="product-color" class="block mb-2 text-sm font-medium text-white-900">Color</label>
+                    <input type="text" name="color" id="product-color"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <!-- Image -->
+                <div>
+                    <label for="product-image" class="block mb-2 text-sm font-medium text-white-900">Image</label>
+                    <input type="file" name="image" id="product-image" accept=".jpg, .jpeg, .png, .gif"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        multiple>
+                </div>
+                <!-- Rating -->
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <div class="flex justify-between">
+                        <button type="submit"
+                            class="px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Add
+                            Product</button>
+
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</body>
+
+<main>
+    <!-- Category Modal -->
+
+
+</main>
+
+
+
+
+<script src="/javascript/banner.js"></script>
+<script src="/javascript/addproduct.js"></script>
+<script src="/javascript/adminproductsearch.js"></script>
+
+
+
+</body>
+
+</html>

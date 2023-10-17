@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheet/cards1.css">
+    <title>View all</title>
+    <style>
+        .truncate-text {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    </style>
+</head>
+
+<header>
+    <%- include('../partial/userheader.ejs') %>
+</header>
+
+<body class="bg-gray-200 ">
+
+    <div class="container  mx-auto p-4 flex flex-row">
+        <!-- Filter options on the left side -->
+        <div class="w-1/4 p-4 bg-white rounded-lg shadow-md mr-4">
+            <div class="flex flex-row mb-2">
+                <label for="priceFilter" class="text-gray-600 mr-2">Price:</label>
+                <select id="priceFilter" onchange="filterProducts()" class="border rounded-md py-1 px-2">
+                    <option value="default">Default</option>
+                    <option value="lowToHigh">Price: Low to High</option>
+                    <option value="highToLow">Price: High to Low</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="brandFilter" class="text-gray-600 mb-2">Brand:</label>
+                <select id="brandFilter" class="border rounded-md py-1 px-2">
+                    <option value="all">All Brands</option>
+                    <option value="brand1">Brand 1</option>
+                    <option value="brand2">Brand 2</option>
+                    <!-- Add more brand options as needed -->
+                </select>
+            </div>
+        </div>
+
+        <section class="">
+            <h1 class="text-3xl font-semibold mb-4 mt-5">Best of <%= products[0].category %>
+            </h1>
+
+            <div id="product-carousel"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+                <% products.forEach(function(product, index) { %>
+                    <!-- Product card template -->
+                    <div class="w-full p-4">
+                        <div class="relative max-w-xs overflow-hidden rounded-lg bg-white shadow-md">
+                            <a
+                                href="<%= user ? 'userssingleproduct?id=' + product.id + '&userId=' + user.id : 'userssingleproduct?id=' + product.id %>">
+                                <img class="h-60 w-full rounded-t-lg object-cover" src="<%= product.imageUrl[3] %>"
+                                    alt="<%= product.name %>" style="object-fit: cover; object-position: center;" />
+                            </a>
+                            <div class="mt-4 px-5 pb-5">
+                                <a href="#">
+                                    <h5 class="text-xl truncate-text font-semibold tracking-tight text-slate-900">
+                                        <%= product.name %>
+                                    </h5>
+                                </a>
+                                <div class="mt-2.5 mb-5 flex items-center">
+                                    <span class="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
+                                        <%= product.rating %>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <p>
+                                        <span class="text-3xl font-bold text-slate-900">
+                                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                                }).format(product.price) %>
+                                        </span>
+                                        <!-- Add discount price if applicable -->
+                                        <% if (product.discountedPrice) { %>
+                                            <span class="text-sm text-slate-900 line-through">₹<%=
+                                                    product.discountedPrice %></span>
+                                            <% } %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% if (index % 9===8) { %>
+            </div>
+            <div class="flex justify-center mt-3">
+                <nav aria-label="Page navigation example">
+                    <ul class="inline-flex -space-x-px text-sm">
+                        <li>
+                            <% if (currentPage> 1) { %>
+                                <a href="/viewall?category=<%= products[0].category %>&page=<%= currentPage - 1 %>&perPage=<%= perPage %>"
+                                    class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                                <% }else{ %>
+                                    <a href="#  "
+                                        class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                                    <% } %>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+                        </li>
+                        <li>
+                            <a href="#" aria-current="page"
+                                class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
+                        </li>
+                        <li>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/viewall?category=<%= products[0].category %>&page=<%= currentPage + 1 %>&perPage=<%= perPage %>"
+                                    class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                                <% } %>
+                        </li>
+                    </ul>
+                </nav>
+                <div id="product-carousel"
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+                    <% } %>
+                        <% }); %>
+                </div>
+            </div>
+        </section>
+
+
+
+</body>
+
+<% if (user) { %>
+    <script>
+        // Set the global user variable with the user's _id
+
+        var user = {
+            _id: '<%= user._id %>'
+        };
+    </script>
+
+    <% } %>
+
+        <script>
+            function filterProducts() {
+                const selectedSort = document.getElementById("priceFilter").value;
+                const category = "<%= products[0].category %>";
+                window.location.href = `/viewall?category=${category}&sort=${selectedSort}`;
+            }
+        </script>
+
+
+
+
+
+</html>

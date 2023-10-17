@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <header>
+        <%- include('../partial/adminheader.ejs') %>
+    </header>
+
+    <section>
+        <main class="mt-10 p-4">
+            <!-- Category edit form -->
+            <form action="/updatecatageory/<%=categories._id%>" method="post" class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4">Edit Category</h2>
+                <div class="mb-4">
+                    <label for="categoryName" class="block text-gray-700 dark:text-gray-300 text-lg font-medium mb-2">Category Name:</label>
+                    <input type="text" value="<%= categories.name %>" id="categoryName" name="categoryName" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring focus:ring-blue-500 dark:focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white">
+                </div>
+                <!-- Other form fields for editing category details -->
+                <div class="flex items-center justify-end mt-6">
+                    <button type="submit" class="bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg focus:outline-none focus:ring focus:ring-blue-300">
+                        Save Changes
+                    </button>
+                    <a href="#" class="ml-4 text-gray-700 dark:text-gray-300 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg focus:outline-none focus:ring focus:ring-gray-300">Cancel</a>
+                </div>
+            </form>
+        </main>
+    
+    </section>
+    
+</body>
+</html>

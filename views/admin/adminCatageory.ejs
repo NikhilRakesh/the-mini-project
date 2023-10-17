@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="/dist/output.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <%- include('../partial/adminheader.ejs') %>
+    </header>
+
+    <section class="mt-2">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="pb-4 bg-white dark:bg-gray-900">
+                <div class="flex justify-between items-center mb-4">
+                    <!-- Search Bar -->
+                    <div class="relative">
+                        <label for="table-search" class="sr-only">Search</label>
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                        </div>
+                        <input type="text" id="table-search"
+                            class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Search for Category">
+                    </div>
+                    <!-- Add Category Button -->
+                    <button type="button" onclick="openAddCategoryModal()"
+                        class="px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Add
+                        Category</button>
+                </div>
+
+                <!-- Table -->
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="p-4">
+
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Catageory name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                <!-- Color -->
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                <!-- Category -->
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                <!-- Price -->
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Edit
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Delete
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% console.log('categories',categories); %>
+                            <% categories.forEach((category, index)=> { %>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    data-category="<%= category.name %>" id="category-row-<%= index %>">
+                                    <td class="w-4 p-4">
+
+                                    </td>
+                                    <th scope="row"
+                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <%= category.name %>
+                                    </th>
+                                    <td class="px-6 py-4">
+                                        <!-- Silver -->
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <!-- Laptop -->
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <!-- $2999 -->
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <a href="/catageoryedit/<%=category._id%>"  class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <a href="/deleteCatageory/<%=category._id%>" class="text-red-600" >Delete</a>
+                                        
+                                    </td>
+                                </tr>
+                                <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+
+
+    <main>
+
+        <div id="add-category-modal"
+            class="fixed inset-0 flex items-center justify-center z-50 hidden bg-gray-900 bg-opacity-50">
+            <div class="bg-gray-800 p-4 w-full max-w-md mx-auto rounded-lg shadow-lg relative">
+                <!-- Close Modal Button -->
+                <button type="button" onclick="closeAddCategoryModal()"
+                    class="absolute top-2 right-2 text-gray-300 bg-transparent hover:bg-gray-600 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+                    <!-- Close button icon here -->
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
+                <!-- Modal Content -->
+                <div class="text-center">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-200">Add Category</h2>
+                </div>
+                <form class="space-y-4" action="/addCategory" method="post">
+                    <!-- Category Name -->
+                    <div>
+                        <label for="category-name" class="block mb-2 text-sm font-medium text-white-900">Category
+                            Name</label>
+                        <input type="text" name="name" id="category-name"
+                            class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit"
+                            class="px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Add
+                            Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+
+</body>
+<script>
+    const searchInput = document.getElementById('table-search');
+    const rows = document.querySelectorAll('[data-category]');
+
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        console.log('clicked3');
+        rows.forEach((row) => {
+            const category = row.getAttribute('data-category').toLowerCase();
+            const rowId = row.id;
+
+            if (category.includes(searchTerm)) {
+                document.getElementById(rowId).classList.remove('hidden');
+            } else {
+                document.getElementById(rowId).classList.add('hidden');
+            }
+        });
+    });
+</script>
+<script>
+    // Function to open the category modal
+    function openAddCategoryModal() {
+        const modal = document.getElementById('add-category-modal');
+        modal.classList.remove('hidden');
+    }
+
+    // Function to close the category modal
+    function closeAddCategoryModal() {
+        const modal = document.getElementById('add-category-modal');
+        modal.classList.add('hidden');
+    }
+</script>
+
+<!-- <script>
+   function openEditCategoryModal(categoryName) {
+    // Set the category name in the modal input field (if needed)
+    document.getElementById('categoryName').value = categoryName;
+    
+    // Open the modal
+    document.getElementById('editCategoryModal').classList.remove('hidden');
+    document.getElementById('editCategoryModalBackdrop').classList.remove('hidden');
+    console.log("clicked1");
+}
+
+let f = function () {
+  document.getElementById('editCategoryModal').classList.add('hidden');
+  document.getElementById('editCategoryModalBackdrop').classList.add('hidden');
+  console.log('clicked2');
+}
+
+f();
+// JavaScript to close the modal
+document.getElementById('closeEditCategoryModalButton').addEventListener('click', f);
+
+
+
+</script> -->
+
+</html>

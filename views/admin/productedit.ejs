@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <header>
+            <%- include('../partial/adminheader.ejs') %>
+        </header>
+
+        <body class="bg-gray-900 text-white p-8 md:p-16">
+            <main class="bg-gray-900 text-white p-8 md:p-16">
+                <form action="/updateProduct/<%= product._id %>" method="POST" class="bg-gray-800 p-4 md:p-8 rounded-lg shadow-lg">
+                    <div class="mb-4">
+                        <label for="username" class="block text-gray-300">product:</label>
+                        <input type="text" name="Productname" value="<%= product.name %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
+                    </div>
+            
+                    <div class="mb-4">
+                        <label for="product-category"
+                            class="block mb-2 text-sm font-medium text-white-900">Category</label>
+                        <select name="category" id="product-category"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <!-- Add dropdown options here -->
+                        <% categories.forEach(function(category) { %>
+                            <option value=<%= category.name %>><%= category.name %></option>
+                        <% }); %>
+                        <!-- Add more categories as needed -->
+                    </select>
+                        <!-- <input type="Category" name="category" value="<%= product.category %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required> -->
+                    </div>
+                    <div class="mb-4">
+                        <label for="Price" class="block text-gray-300">Price:</label>
+                        <input type="Price" name="price" value="<%= product.price %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="text" class="block text-gray-300">Color:</label>
+                        <input type="text" name="color" value="<%= product.color %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 font-semibold mb-2">Existing Images:</label>
+                        <div class="flex space-x-4">
+                            <% product.imageUrl.forEach(function(imageUrl) { %>
+                                <div class="relative">
+                                    <img class="w-36" src="<%= imageUrl %>" alt="product image">
+                                    <div class="absolute inset-x-0 bottom-0 p-2 bg-white">
+                                        <!-- Edit Button -->
+                                        <% console.log('editejs..',imageUrl); %>
+                                        <a href="/productImageEdit?imageUrl=<%= imageUrl %>">
+                                            <button type="button" class="text-blue-500 hover:text-blue-700 mr-2">
+                                                Edit
+                                            </button>
+                                        </a>
+                                        
+                                        <!-- Delete Button -->
+                                        <button type="button" class="text-red-500 hover:text-red-700">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                    
+                    
+                    
+            
+                    <!-- Add more input fields for other user attributes as needed -->
+            
+                    <div class="mt-6">
+                        <button type="submit" class="bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-full md:w-auto">Save Changes</button>
+                    </div>
+                </form>
+            </main>
+            
+        </body>
+    
+</body>
+</html>

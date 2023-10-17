@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <!-- Include Tailwind CSS stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Add your custom CSS here -->
+</head>
+<body>
+    <!-- Navigation bar (if needed) -->
+    <!-- Replace this with your custom styling -->
+    <nav class="bg-blue-500 p-4 text-white">
+        <div class="container mx-auto">
+            <!-- Your navigation content here -->
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+            <button type="button" onclick="closeOTPVerificationModal()"
+                class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-600 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+                <!-- Close button icon here -->
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+            </button>
+            <h3 class="text-xl font-medium text-gray-700">Enter OTP</h3>
+            <form class="space-y-4" action="/forgototpverify" method="post">
+                <!-- OTP input field here -->
+                <div>
+                    <label for="otp" class="block mb-2 text-sm font-medium text-gray-700">OTP</label>
+                    <input type="text" name="otp" id="otp"
+                        class="bg-gray-100 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        placeholder="Enter OTP" required maxlength="6">
+                </div>
+                <div>
+                    <label for="otp" class="block mb-2 text-sm font-medium text-gray-700">password</label>
+                    <input type="text" name="password" id="otp"
+                        class="bg-gray-100 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        placeholder="password" required maxlength="6">
+                </div>
+                <div>
+                    <label for="otp" class="block mb-2 text-sm font-medium text-gray-700">confirm password</label>
+                    <input type="text" name="confirmpassword" id="otp"
+                        class="bg-gray-100 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        placeholder="confirm password" required maxlength="6">
+                </div>
+                <!-- Verify OTP button here -->
+                <button type="submit"
+                    class="w-full text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                    Verify OTP
+                </button>
+                <!-- Resend OTP link here -->
+                <div class="text-sm font-medium text-gray-500">
+                    <p>Didn't receive OTP?</p>
+                    <a href="/otpresend" class="text-blue-500 hover:underline">Resend OTP</a>
+                    <!-- OTP timer display here -->
+                    <p id="otp-timer" class="mt-2 text-gray-700"></p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer (if needed) -->
+    <!-- Replace this with your custom styling -->
+    <footer class="bg-gray-300 p-4 text-gray-700 text-center">
+        <div class="container mx-auto">
+            <!-- Your footer content here -->
+        </div>
+    </footer>
+
+    <!-- Add your custom JavaScript here -->
+</body>
+</html>
