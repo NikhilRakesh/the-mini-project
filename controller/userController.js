@@ -51,7 +51,7 @@ const home = async (req, res) => {
             user = await signupSchema.findById(userId);
 
         }
-        const SmartPhones = await productSchema.find({ category: "SmartPhones" });
+        const SmartPhones = await productSchema.find({ list: false, category: "SmartPhones" })
         const Laptops = await productSchema.find({ category: "Laptops" });
         let showErrorModal = req.session.showErrorModal
         let passworderror = req.session.passworderror
@@ -273,21 +273,21 @@ const viewall = async (req, res) => {
         let totalProductsCount;
 
         if (sortOption === 'lowToHigh') {
-            products = await productSchema.find({ category: category })
+            products = await productSchema.find({ list: false, category: category })
                 .sort({ price: 1 })
-                .skip((page - 1) * perPage)
+                .skip((page - 1) * perPage) 
                 .limit(perPage);
 
             totalProductsCount = await productSchema.countDocuments({ category: category });
         } else if (sortOption === 'highToLow') {
-            products = await productSchema.find({ category: category })
+            products = await productSchema.find({list: false,  category: category })
                 .sort({ price: -1 })
                 .skip((page - 1) * perPage)
                 .limit(perPage);
 
             totalProductsCount = await productSchema.countDocuments({ category: category });
         } else {
-            products = await productSchema.find({ category: category })
+            products = await productSchema.find({list: false,  category: category })
                 .skip((page - 1) * perPage)
                 .limit(perPage);
 
@@ -796,7 +796,32 @@ const checkout = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.render('user/checkout', { user })
+
+        let totalPrice = 0;
+        user.shoppingCart.items.forEach((cartItem) => {
+            totalPrice += cartItem.productId.price * cartItem.quantity; // Multiply by quantity
+        });
+
+        const discountPercentage = 12; // 10% discount
+        const discount = (totalPrice * discountPercentage) / 100;
+        const finalTotal = totalPrice - discount;
+
+        const FormatedtotalPrice = new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+        }).format(totalPrice);
+
+        const formattedDiscount = new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+        }).format(discount);
+
+        const formattedFinalTotal = new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+        }).format(finalTotal);
+
+        res.render('user/checkout', { user ,FormatedtotalPrice,formattedDiscount,formattedFinalTotal})
 
     } catch (error) {
         console.error('Error in deleteAdress:', error);
@@ -965,12 +990,15 @@ const buyNow = async (req, res) => {
     }
 }
 
-
+    
 
 const buyNoworder = async (req, res) => {
     try {
-
+console.log('buynoworder',req.body);
         const userId = req.session.user._id;
+
+        const user = await signupSchema
+        .findById(userId)
 
         const productId = req.query.productId
         const product = await productSchema.findById(productId);

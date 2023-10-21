@@ -29,8 +29,6 @@ router.post('/addproduct', upload.array('image',4), productController.addProduct
 router.get('/admin',admincontroller.adminlogin) 
 router.post('/adminloginpost',admincontroller.adminloginpost) 
 router.get('/adminlogout',admincontroller.adminlogout) 
-router.get('/adminusersedit/:userId',adminSessionMiddleware,admincontroller.adminusersedit) 
-router.post('/updateuser/:userId',adminSessionMiddleware, admincontroller.updateuser)
 router.post('/addCategory',adminSessionMiddleware,productController.addCategory) 
 router.get('/productedit',adminSessionMiddleware,productController.productedit) 
 router.post('/updateProduct/:productId',adminSessionMiddleware, productController.updateProduct)
@@ -43,6 +41,14 @@ router.post('/updatecatageory/:catageoryId',admincontroller.updatecatageory)
 router.get('/deleteCatageory/:catageoryId',admincontroller.deleteCatageory) 
 router.get('/productImageEdit',adminSessionMiddleware,productController.productImageEdit) 
 router.get('/orders',adminSessionMiddleware,admincontroller.orders) 
+router.get('/stockPage',adminSessionMiddleware,productController.stockPage) 
+router.get('/listProduct',adminSessionMiddleware,productController.listProduct) 
+router.get('/unlistproduct',adminSessionMiddleware,productController.unlistproduct) 
+router.get('/count',adminSessionMiddleware,productController.count) 
+
+
+
+
 
 
 

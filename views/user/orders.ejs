@@ -47,20 +47,50 @@
                         </tr>
                     </thead>
                     <tbody id="orderHistoryTable">
-                        <% orders.forEach(order => { %>
-                            <% console.log('imageurls',orders.products); %>
-                            <% order.products.forEach(product => { %>
-                                <tr>
-                                    <td class="px-4 py-2"><%= order.orderDate.toISOString().split('T')[0] %></td>
-                                    <td class="px-4 py-2"><%= product.productName %></td>
-                                    <td class="px-4 py-2"><img src="<%= product.imageUrl[3] %>" alt="Product Image" class="w-12 h-12"></td>
-                                    <td class="px-4 py-2"><%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.price) %></td>
-                                    <td class="px-4 py-2"><%= order.status %></td>
-                                </tr>
-                            <% }); %>
-                        <% }); %>
-                    </tbody> 
-                    
+                        <% orders.forEach(order=> { %>
+                                <% order.products.forEach(product=> { %>
+                                    <tr>
+                                        <td class="px-4 py-2">
+                                            <%= order.orderDate.toISOString().split('T')[0] %>
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <%= product.productName %>
+                                        </td>
+                                        <td data-product-id="<%=product.productName %>" data-order-id="<%= order._id %>"
+                                            data-username="<%=user.username %>" data-image="<%= product.imageUrl[3] %>"
+                                            data-price="<%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                        }).format(product.price) %>" data-quantity="<%=product.quantity %>"
+                                            data-date=" <%= order.orderDate.toISOString().split('T')[0] %>"
+                                            data-status=" <%= order.status %>" data-adress="<%=order.shippingAddress %>"
+                                            class=" openModal px-4 py-2"><img src="<%= product.imageUrl[3] %>"
+                                                alt="Product Image" class="w-12 h-12">
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                                }).format(product.price) %>
+                                        </td>
+                                        <% if(order.status==='Canceled' ) {%>
+                                            <td id="orderStatusCell" class="px-4 py-2 text-red-600 ">
+                                                <%=order.status%>
+                                            </td>
+                                            <% }else if(order.status==='Delivered' ){ %>
+                                                <td id="orderStatusCell" class="px-4 py-2 text-green-600">
+                                                    <%=order.status%>
+                                                </td>
+                                                <% }else if(order.status==='Shipped' ){ %>
+                                                    <td id="orderStatusCell" class="px-4 py-2 text-zinc-500">
+                                                        <%=order.status%>
+                                                    </td>
+                                                    <% } else {%>
+                                                        <td id="orderStatusCell" class="px-4 py-2 ">
+                                                            <%=order.status%>
+                                                        </td>
+                                                        <% } %>
+                                    </tr>
+                                    <% }); %>
+                                        <% }); %>
+                    </tbody>
+
                 </table>
             </div>
 
@@ -68,8 +98,154 @@
 
     </div>
 
+
+
+
+
+    <main>
+        <div id="myModal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center hidden">
+            <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+
+            <div
+                class="modal-container bg-white w-9/12 md:w-1/2 lg:w-3/5 xl:w-1/2 mx-auto my-8 rounded shadow-lg z-50 overflow-y-auto max-h-3/5">
+
+                <!-- Modal content -->
+                <div class="modal-content py-4 text-left px-6">
+                    <h2 class="text-2xl font-semibold text-gray-800">Order Details</h2>
+                    <div class="my-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Full Address:</span>
+                            <span id="fullAddress" class="text-gray-900">123 Main St, City, Country</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">User Name:</span>
+                            <span id="userName" class="text-gray-900">John Doe</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Product Image:</span>
+                            <img id="productImage" src="product_image_url" alt="Product Image" class="w-12 h-12">
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Product Name:</span>
+                            <span id="productName" class="text-gray-900">Product Name</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Order Date:</span>
+                            <span id="orderDate" class="text-gray-900">2023-10-18</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Order Status:</span>
+                            <span id="orderStatus" class="text-gray-900">Pending</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Price:</span>
+                            <span id="price" class="text-gray-900">$19.99</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Quantity:</span>
+                            <span id="quantity" class="text-gray-900">1</span>
+                        </div>
+                        <div class="flex justify-center mt-4">
+                            <button id="cancelOrder"
+                                class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded focus:outline-none focus:ring focus:ring-red-300">
+                                Cancel Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer flex justify-center py-4 text-right">
+                    <button id="closeModal"
+                        class="px-4 py-2 text-white bg-gray-800 hover:bg-gray-600 rounded focus:outline-none focus:ring focus:ring-gray-300">Close</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
 </body>
 
+<script>
+    const openModalElements = document.querySelectorAll('.openModal');
+    const closeModal = document.getElementById('closeModal');
+    const modal = document.getElementById('myModal')
 
+    const productname = document.getElementById('productName')
+    const username = document.getElementById('userName')
+    const adress = document.getElementById('fullAddress')
+    const productimage = document.getElementById('productImage')
+    const orderdate = document.getElementById('orderDate')
+    const orderstatus = document.getElementById('orderStatus')
+    const price = document.getElementById('price')
+    const quantity = document.getElementById('quantity')
+    const cancelOrderButton = document.getElementById('cancelOrder');
+
+
+    openModalElements.forEach(function (element) {
+        element.addEventListener('click', function () {
+            modal.classList.remove('hidden');
+            const productName = element.getAttribute('data-product-id');
+            const userName = element.getAttribute('data-username')
+            const addressDetails = element.getAttribute('data-adress')
+            const Productimage = element.getAttribute('data-image')
+            const Orderdate = element.getAttribute('data-date')
+            const Orderstatus = element.getAttribute('data-status')
+            const Price = element.getAttribute('data-price')
+            const Quantity = element.getAttribute('data-quantity')
+
+            productname.textContent = productName
+            username.textContent = userName
+            productimage.src = Productimage
+            const array = addressDetails.replace(/{/g, '[')
+                .replace(/}/g, ']')
+                .replace(/(\w+):/g, '')
+            const cleanedString = array.replace(/[\[\]\s'']/g, '');
+            adress.textContent = cleanedString
+            orderdate.textContent = Orderdate
+            orderstatus.textContent = Orderstatus
+            price.textContent = Price
+            quantity.textContent = Quantity
+
+            if (orderstatus.textContent.trim() === 'Canceled') {
+                orderstatus.style.color = 'red';
+            } else if (orderstatus.textContent.trim() === 'Delivered') {
+                orderstatus.style.color = 'green';
+
+            } else if (orderstatus.textContent.trim() === 'Shipped') {
+                orderstatus.style.color = 'orange';
+
+            } else {
+                orderstatus.style.color = 'grey';
+
+            }
+
+
+            if (Orderstatus.trim() === 'Pending') {
+                console.log('if');
+                cancelOrderButton.style.display = 'block';
+
+                cancelOrderButton.addEventListener('click', function () {
+                    const orderId = element.getAttribute('data-order-id');
+
+                    const selectedStatus = 'Canceled'
+
+                    const cancelOrderUrl = `/cancelorder?orderId=${orderId}&status=${selectedStatus}`;
+
+                    window.location.href = cancelOrderUrl;
+                });
+
+            } else {
+                console.log('else');
+                cancelOrderButton.style.display = 'none';
+            }
+
+        });
+    });
+
+    closeModal.addEventListener('click', function () {
+        modal.classList.add('hidden');
+    });
+</script>
 
 </html>

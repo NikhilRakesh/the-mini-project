@@ -42,13 +42,13 @@ const orderSchema = new mongoose.Schema({
     shippingAddress: {
         street: String,
         city: String,
-        state: String,
+        state: String,  
         postalCode: String,
         country: String,
     },
     status: {
         type:String,
-        default:'pending'
+        default:'Pending'
     }
     // You can add more fields specific to orders here
 });

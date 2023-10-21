@@ -77,40 +77,10 @@ const adminlogout = (req, res) => {
     });
 };
 
-// user edit page render
-const adminusersedit = async (req, res) => {
-    const userId = req.params.userId;
-    try {
-        const user = await signupSchema.findById(userId);
-        res.render('admin/adminuseredit', { user })
 
 
-    }
-    catch (error) {
-        console.error('Error rendering edit user form:', error);
-        res.status(500).send('Internal Server Error');
-    }
-}
 
-// user edit post 
-const updateuser = async (req, res) => {
-    const userId = req.params.userId;
-    const { username, email } = req.body;
 
-    try {
-        const updatedUser = await signupSchema.findByIdAndUpdate(userId, { username, email }, { new: true });
-
-        if (!updatedUser) {
-            return res.status(404).send('User not found');
-        }
-
-        res.redirect('/adminusers');
-    }
-    catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).send('Internal Server Error');
-    }
-}
 
 // user block
 const userblock = async (req, res) => {
@@ -262,8 +232,7 @@ const orders = async (req, res) => {
 module.exports = {
     adminhome, adminusers,
     adminlogin, adminloginpost,
-    adminlogout, adminusersedit,
-    updateuser, userblock, userunblock,
+    adminlogout, userblock, userunblock,
     adminCatageory, catageoryedit,
     updatecatageory, deleteCatageory,
     orders,

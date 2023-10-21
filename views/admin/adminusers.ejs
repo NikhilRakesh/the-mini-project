@@ -86,9 +86,7 @@
                     <th scope="col" class="px-2 sm:px-6 py-3 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 xl:px-10 xl:py-5">
                         Status
                     </th>
-                    <th scope="col" class="px-2 sm:px-6 py-3 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 xl:px-10 xl:py-5">
-                        Edit
-                    </th>
+                    
                     <th scope="col" class="px-2 sm:px-6 py-3 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 xl:px-10 xl:py-5">
                         Action
                     </th>
@@ -107,17 +105,7 @@
                         <td class="px-2 sm:px-6 py-4 md:px-6 md:py-4 lg:px-8 lg:py-6 xl:px-10 xl:py-8">
                             Active
                         </td>
-                        <td class="px-2 sm:px-6 py-4 md:px-6 md:py-4 lg:px-8 lg:py-6 xl:px-10 xl:py-8">
-                            <a href="/adminusersedit/<%= user.id %>">
-                                <button data-modal-target="registration-modal" data-modal-toggle="registration-modal"
-                                    data-user-id="<%= user.id %>"
-                                    class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                    type="button">
-                                    Edit
-                                </button>
-                            </a>
-
-                        </td>
+                        
                         <td class="px-2 sm:px-6 py-4 md:px-6 md:py-4 lg:px-8 lg:py-6 xl:px-10 xl:py-8">
                             <% if (user.blocked) { %>
                                 <!-- <a href="/userunblock/<%= user._id %>"> -->

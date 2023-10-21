@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocks</title>
+</head>
+<header>
+    <%- include('../partial/adminheader.ejs') %>
+</header>
+
+<body>
+    <section>
+
+
+
+        <link
+            href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+            rel="stylesheet">
+        <div class="flex items-center justify-center min-h-screen  bg-gray-900">
+            <div class="col-span-12 w-full">
+                <div id="button-container" class="overflow-auto  lg:overflow-visible ">
+                    <table class="table text-gray-400 border-separate w-full space-y-6 text-sm">
+                        <thead class="bg-gray-800 text-gray-500">
+                            <tr>
+                                <th class="p-3">Products Name</th>
+                                <th class="p-3 text-left">Category</th>
+                                <th class="p-3 text-left">Price</th>
+                                <th class="p-3 text-left">Status</th>
+                                <th class="p-3 text-left">Action</th>
+                                <th class="p-3 text-left">Quantity</th>
+                            </tr>
+                        </thead>
+                        <% product.forEach(products=> { %>
+                            <tbody>
+                                <tr class="bg-gray-800">
+                                    <td class="p-3">
+                                        <div class="flex align-items-center">
+
+                                            <img class="rounded-full h-12 w-12  object-cover"
+                                                src="<%= products.imageUrl[3] %>" alt="unsplash image">
+                                            <div class="ml-3 mt-4">
+                                                <div class="">
+                                                    <%= products.name %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-3">
+                                        <%= products.category %>
+                                    </td>
+                                    <td class="p-3 font-bold">
+                                        <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                            }).format(products.price) %>
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="bg-green-400 text-gray-50 rounded-md px-2">available</span>
+                                    </td>
+                                    <td class="p-3 ">
+                                        <% if(products.list){%>
+                                            <a href="/listproduct?productId=<%= products._id %>">
+                                                <button
+                                                    class="list-button bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2"
+                                                    data-product-id="<%= products._id %>">
+                                                    List Product
+                                                </button>
+                                            </a>
+                                            <% }else{ %>
+                                                <a href="/unlistproduct?productId=<%= products._id %>">
+                                                    <button
+                                                        class="unlist-button bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+                                                        data-product-id="<%= products._id %>">
+                                                        Unlist Product
+                                                    </button>
+                                                </a>
+                                                <% } %>
+                                    </td>
+                                    <td class="p-3">
+                                        <button id="count" data-modaltarget="<%= products._id %>" count="<%= products.count%>"
+                                            data-name="<%= products.name %>"
+                                            class="toggleModalButton block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                            type="button">
+                                            Add Quantity
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                </tr>
+                            </tbody>
+                            <% }); %>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <style>
+            .table {
+                border-spacing: 0 15px;
+            }
+
+            i {
+                font-size: 1rem !important;
+            }
+
+            .table tr {
+                border-radius: 20px;
+            }
+
+            tr td:nth-child(n+6),
+            tr th:nth-child(n+6) {
+                border-radius: 0 .625rem .625rem 0;
+            }
+
+            tr td:nth-child(1),
+            tr th:nth-child(1) {
+                border-radius: .625rem 0 0 .625rem;
+            }
+        </style>
+
+        </ul>
+    </section>
+
+    <main>
+
+
+        <!-- Main modal -->
+        <div id="defaultModal"
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 max-h-screen">
+            <div class="relative w-full max-w-2xl max-h-full mx-auto">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <!-- Modal header -->
+                    <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Product Quantity
+                        </h3>
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            data-modal-hide="defaultModal">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="p-6 space-y-6">
+                        <form id="quantityForm">
+                            <div class="flex flex-col space-y-4">
+                                <div>
+                                    <label for="productName" class="text-sm text-gray-500 dark:text-gray-400">Product
+                                        Name:</label>
+                                    <span id="productName" class="text-white-800">Product Name Here</span>
+                                </div>
+                                <div>
+                                    <label for="productid" class="text-sm text-gray-500 dark:text-gray-400">Product
+                                        Id:</label>
+                                    <span id="productid" class="text-white-800">product id</span>
+                                </div>
+
+                                <label for="newQuantity" class="text-sm text-gray-500 dark:text-gray-400">
+                                    Quantity:</label>
+                                <input type="number" id="newQuantity" name="newQuantity"
+                                    class="border rounded-md p-2 text-gray-800" placeholder="New Quantity" min="0"
+                                    step="1" required >
+                            </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div
+                        class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                        <button type="submit" id="acceptButton"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">I
+                            accept</button>
+                        </form>
+
+                        <button id="declineButton" type="button"
+                            class="text-gray-500 bg-white hover-bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+
+
+   
+
+
+
+</body>
+
+<script>
+
+    const toggleModalButton = document.querySelectorAll('.toggleModalButton');
+    const defaultModal = document.getElementById('defaultModal');
+    const declineButton = document.getElementById('declineButton');
+    const productNameElement = document.getElementById('productName');
+    const quantity = document.getElementById('newQuantity');
+    const acceptButton = document.getElementById('acceptButton');
+    const form = document.getElementById('countForm');
+    const Productid = document.getElementById('productid');
+    const count = document.getElementById('count');
+
+
+
+
+
+    declineButton.addEventListener('click', function () {
+        defaultModal.classList.add('hidden');
+    });
+
+    toggleModalButton.forEach(ele => {
+        ele.addEventListener('click', function () {
+
+            console.log('productid', ele.dataset.modaltarget);
+
+            console.log('Product Name:', ele.dataset.name);
+
+            productNameElement.innerText = ele.dataset.name;
+            Productid.innerText = ele.dataset.modaltarget
+
+            const Count = count.getAttribute('count')
+            quantity.value = Count
+
+            if (defaultModal.classList.contains('hidden')) {
+                defaultModal.classList.remove('hidden');
+            } else {
+                defaultModal.classList.add('hidden');
+            }
+        });
+
+    })
+
+
+    acceptButton.addEventListener('click', function (event) {
+        console.log('here1');
+        event.preventDefault();
+        const productId = Productid.innerText
+        const newQuantity = quantity.value
+
+        console.log('productId', productId);
+        console.log('quantity innnertext',quantity.value);
+
+        count.setAttribute('count',newQuantity);
+
+
+        fetch(`/count?productId=${productId}&newQuantity=${newQuantity}`, {
+            method: 'get',
+           
+        })
+            .then(response => {
+                if (response.ok) {
+
+                } else {
+
+                }
+            })
+            .catch(error => {
+            });
+
+        defaultModal.classList.add('hidden');
+    });
+
+</script>
+
+
+
+</html>

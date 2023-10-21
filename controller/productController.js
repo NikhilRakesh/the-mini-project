@@ -1,17 +1,34 @@
 const productSchema = require('../modal/productSchema')
 const categorySchema = require('../modal/categorySchema')
 const signupSchema = require('../modal/signupSchema')
+const orderSchema = require('../modal/orderSchema')
+
 const path = require('path')
 
 
 
 // admin product list page
-const adminproducts = async (req, res) => {
-    const products = await productSchema.find();
-    const categories = await categorySchema.find()
+const productsPerPage = 10; // Set the number of products to display per page
 
-    res.render('admin/adminproducts', { products, categories })
-}
+
+const adminproducts = async (req, res) => {
+    const page = req.query.page || 1; // Get the current page from the query parameters (default to page 1)
+    const skip = (page - 1) * productsPerPage;
+
+    const totalProducts = await productSchema.countDocuments();
+
+    // Retrieve a slice of products based on pagination
+    const products = await productSchema
+        .find({list: false})
+        .skip(skip)
+        .limit(productsPerPage);
+
+    const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+    const categories = await categorySchema.find();
+
+    res.render('admin/adminproducts', { products, categories, currentPage: parseInt(page), totalPages });
+};
 
 
 
@@ -23,20 +40,20 @@ const addProduct = async (req, res) => {
 
 
 
-           if (!req.files || req.files.length === 0) {
-      return res.status(400).send('No files uploaded.');
-    }
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).send('No files uploaded.');
+        }
 
-    const imagePaths = req.files.map(file => {
-      let imagePath = file.path;
+        const imagePaths = req.files.map(file => {
+            let imagePath = file.path;
 
-      if (imagePath.includes('public\\')) {
-        imagePath = imagePath.replace('public\\', '');
-      } else if (imagePath.includes('public/')) {
-        imagePath = imagePath.replace('public/', '');
-      }
-      return imagePath;
-    });
+            if (imagePath.includes('public\\')) {
+                imagePath = imagePath.replace('public\\', '');
+            } else if (imagePath.includes('public/')) {
+                imagePath = imagePath.replace('public/', '');
+            }
+            return imagePath;
+        });
 
         // Create a new product instance
         const newProduct = new productSchema({
@@ -187,17 +204,109 @@ const deleteProductCart = async (req, res) => {
 
 
 
-const productImageEdit = async (req,res) => {
-    try{
+const productImageEdit = async (req, res) => {
+    try {
 
         const imageurll = req.query.imageUrl
         const imageurl = imageurll
-        console.log('productImageEdit',imageurl);
+        console.log('productImageEdit', imageurl);
         res.render('admin/imageedit', { imageurl });
 
     } catch (error) {
         console.error('Error productImageEdit:', error);
         return res.redirect('back')
+    }
+}
+
+const stockPage = async (req, res) => {
+    try {
+
+        const product = await productSchema.find({});
+
+        res.render('admin/stock', { product })
+
+    } catch (error) {
+        console.error('Error stockPage:', error);
+        return res.redirect('back')
+    }
+}
+
+const listProduct = async (req, res) => {
+    try {
+        const productId = req.query.productId
+console.log('list product');
+        const product = await productSchema.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        product.list = false;
+        await product.save();
+
+        res.redirect('back')
+    } catch (error) {
+        console.error('Error list:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+
+const unlistproduct = async (req, res) => {
+    try {
+        const productId = req.query.productId;
+        console.log('Unlist product');
+
+        const product = await productSchema.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        product.list = true;
+        await product.save();
+
+        res.redirect('back')
+    } catch (error) {
+        console.error('Error unlisting product:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+
+
+const count = async (req,res) => {
+    try{
+        const productId = req.query.productId
+        const count = req.query.newQuantity
+        const product = await productSchema.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        product.count = count
+         await product.save()
+
+         return res.status(200).json({ success: true, message: 'Product count updated' });
+
+    }catch (error) {
+        console.error('Error updating product count:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+
+const cancelOrder = async (req,res) => {
+    try{
+        const orderId = req.query.orderId
+        const status = req.query.status
+        console.log('orderid',orderId);
+        const order = await orderSchema.findById(orderId)
+        order.status = status
+        await order.save()
+        res.redirect('back')
+    }catch (error) {
+        console.error('Error updating cancelOrder:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
 
@@ -210,5 +319,7 @@ module.exports = {
     addProduct, adminproducts,
     addCategory, productedit,
     updateProduct, productdelete,
-    deleteProductCart,productImageEdit,
+    deleteProductCart, productImageEdit,
+    stockPage, listProduct, unlistproduct,
+    count,cancelOrder,
 }

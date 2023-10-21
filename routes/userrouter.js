@@ -37,6 +37,8 @@ router.get('/myOrder',userBlocked,userSessionMiddleare,usercontroller.myOrder)
 router.get('/falser',usercontroller.falser)
 router.get('/buyNow',userBlocked,userSessionMiddleare,usercontroller.buyNow)
 router.get('/buyNoworder',userBlocked,userSessionMiddleare,usercontroller.buyNoworder)
+router.get('/cancelorder',userSessionMiddleare,productController.cancelOrder) 
+
 
 
 

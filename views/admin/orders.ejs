@@ -24,7 +24,7 @@
                     <th scope="col" class="px-6 py-3">
                         Product
                     </th>
-                    <th scope="col" class="px-6 py-3">     
+                    <th scope="col" class="px-6 py-3">
                         Qty
                     </th>
                     <th scope="col" class="px-6 py-3">
@@ -41,50 +41,216 @@
                     </th>
                 </tr>
             </thead>
-            <tbody>
-                <% console.log('orders',orders); %>
-                <% orders.forEach(order=> { %>
-                    <% console.log('imageurls',orders.products); %>
-                        <% order.products.forEach(product=> { %>
-                            <tr
-                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td class="w-32 p-4">
-                                    <img src="<%= product.imageUrl[3] %>" alt="Apple Watch">
-                                </td>
-                                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                    <%= product.productName %>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center space-x-3">
-                                        
-                                        <div>
-                                            <input type="number" id="first_product"
-                                                class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                placeholder=" <%= product.quantity %>" required>
-                                        </div>
-                                        
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                    <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(product.price) %>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <%= order.orderDate.toISOString().split('T')[0] %>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <%= order.customerName %>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <%= order.status %>
-                                </td>
-                            </tr>
-                            <% }); %>
-                                <% }); %>
-            </tbody>
+
+            <% let counter=1; %>
+                    <% orders.forEach(order=> { %>
+                        <tbody class="border-b dark:border-gray-700">
+                            <% order.products.forEach(product=> { %>
+                                    <tr class="bg-white  dark:bg-gray-800  hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <td class="w-32 p-4">
+                                            <img data-id="<%= order._id %>" data-adres="<%=order.shippingAddress %>"
+                                                data-price="<%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                        }).format(product.price) %>"
+                                                data-date="<%= order.orderDate.toISOString().split('T')[0] %>"
+                                                data-status="<%= order.status %>"
+                                                data-username="<%= order.customerName %>"
+                                                data-image="<%= product.imageUrl[3]%> %>"
+                                                data-quantity="<%=product.quantity %>"
+                                                data-productname="<%= product.productName %>" class="openModalButton"
+                                                src="<%=product.imageUrl[3]%>" alt="Apple Watch">
+                                        </td>
+                                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                            <%= product.productName %>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3">
+
+                                                <div class="orderdetails">
+                                                    <input type="number" name="quantity<% counter++ %>"
+                                                        class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder=" <%= product.quantity %>" required>
+                                                </div>
+
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                                }).format(product.price) %>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <%= order.orderDate.toISOString().split('T')[0] %>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <%= order.customerName %>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="statusCell" data-product-id="<%= order._id %>">
+                                                <%= order.status %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                        </tbody>
+                        <% }); %>
+
         </table>
     </div>
 
+    <section>
+        <div id="myModal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center hidden">
+            <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+
+            <div
+                class="modal-container bg-gray-800 w-9/12 md:w-1/2 lg:w-3/5 xl:w-1/2 mx-auto my-8 rounded shadow-lg z-50 overflow-y-auto max-h-3/5 text-white">
+
+                <!-- Modal content -->
+                <div class="modal-content py-4 text-left px-6">
+                    <h2 class="text-2xl font-semibold text-gray-200">Order Details</h2>
+                    <div class="my-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Full Address:</span>
+                            <span id="fullAddress" class="text-gray-100">123 Main St, City, Country</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">User Name:</span>
+                            <span id="userName" class="text-gray-100">John Doe</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Product Image:</span>
+                            <img id="productImage" src="product_image_url" alt="Product Image" class="w-12 h-12">
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Product Name:</span>
+                            <span id="productName" class="text-gray-100">Product Name</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Order Date:</span>
+                            <span id="orderDate" class="text-gray-100">2023-10-18</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Order Status:</span>
+                            <span id="orderStatus" class="text-gray-100">Pending</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Price:</span>
+                            <span id="price" class="text-gray-100">$19.99</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-300">Quantity:</span>
+                            <span id="quantity" class="text-gray-100">1</span>
+                        </div>
+                        <div class="flex justify-center mt-4">
+                            <select id="orderStatusSelect"
+                                class="px-4 py-2 text-white bg-gray-700 hover:bg-gray-600 rounded focus:outline-none focus:ring focus:ring-gray-300">
+                                <option value="Pending">Pending</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="id_order">
+                    </div>
+                </div>
+
+                <div class="modal-footer flex justify-center py-4 text-right">
+                    <button id="closeModal"
+                        class="px-4 py-2 text-white bg-gray-800 hover:bg-gray-600 rounded focus:outline-none focus:ring focus:ring-gray-300">Close</button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
 
 </body>
+
+
+
+<script>
+    const openModalButtons = document.querySelectorAll('.openModalButton');
+    const modal = document.getElementById('myModal');
+    const closeModal = document.getElementById('closeModal');
+    const id_order = document.getElementById("id_order");
+    const Productname = document.getElementById('productName')
+    const fullAddress = document.getElementById('fullAddress')
+    const userName = document.getElementById('userName')
+    const productImage = document.getElementById('productImage')
+    const orderDate = document.getElementById('orderDate')
+    const orderStatus = document.getElementById('orderStatus')
+    const price = document.getElementById('price')
+    const quantity = document.getElementById('quantity')
+
+    openModalButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            modal.classList.remove('hidden');
+            id_order.value = button.dataset.id;
+
+            const productname = button.getAttribute('data-productname')
+            const Adresss = button.getAttribute('data-adres')
+            const array = Adresss.replace(/{/g, '[')
+                .replace(/}/g, ']')
+                .replace(/(\w+):/g, '')
+            const cleanedString = array.replace(/[\[\]\s'']/g, '');
+            const Username = button.getAttribute('data-username')
+            const Imageurl = button.getAttribute('data-image')
+            const Date = button.getAttribute('data-date')
+            const status = button.getAttribute('data-status')
+            const Price = button.getAttribute('data-price')
+            const Quantity = button.getAttribute('data-quantity')
+
+
+            Productname.textContent = productname
+            fullAddress.textContent = cleanedString
+            userName.textContent = Username
+            productImage.src = Imageurl
+            orderDate.textContent = Date
+            orderStatus.textContent = status
+            price.textContent = Price
+            quantity.textContent = Quantity
+
+            console.log('productname', productname);
+
+
+            const orderStatusSelect = document.getElementById('orderStatusSelect');
+
+            orderStatusSelect.addEventListener('input', function () {
+                const selectedStatus = orderStatusSelect.value;
+                console.log('selectedStatus', selectedStatus);
+                document.getElementById('orderStatus').textContent = selectedStatus;
+
+                const statusCells = document.querySelectorAll(`.statusCell[data-product-id="${button.dataset.id}"]`);
+                statusCells.forEach(statusCell => {
+                    statusCell.textContent = selectedStatus;
+                });
+
+                const orderId = id_order.value 
+                console.log(' const id_order',orderId);
+
+                const cancelOrderUrl = `/cancelorder?orderId=${orderId}&status=${selectedStatus}`;
+
+                fetch(cancelOrderUrl, {
+                    method: 'GET',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Order canceled successfully');
+                        } else {
+                            console.error('Failed to cancel order');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    });
+
+
+    closeModal.addEventListener('click', function () {
+        modal.classList.add('hidden');
+    });
+
+
+</script>
+
 
 </html>
