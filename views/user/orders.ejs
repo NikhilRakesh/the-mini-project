@@ -47,7 +47,8 @@
                         </tr>
                     </thead>
                     <tbody id="orderHistoryTable">
-                        <% orders.forEach(order=> { %>
+                        <% orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
+                            orders.forEach(order=> { %>
                                 <% order.products.forEach(product=> { %>
                                     <tr>
                                         <td class="px-4 py-2">

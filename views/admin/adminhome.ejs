@@ -5,16 +5,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/dist/output.css" rel="stylesheet">
-    <title>Document</title>
+    <title>admindashbord</title>
 </head>
-
-        <header>
-            <%- include('../partial/adminheader.ejs') %>
-        </header>
-
-
+<style>
    
-    <script src="/javascript/banner.js"></script>
+   body::-webkit-scrollbar {
+    width: 0.4em;
+  }
+
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  } 
+</style>
+
+<header>
+    <%- include('../partial/adminheader.ejs') %>
+</header>
+
+<section class="p-4 section-without-scrollbar ">
+    <!-- Revenue Chart -->
+    <div class="w-full md:w-full g:w-1/3 p-4">
+        <div class="bg-gray-800 rounded-lg shadow p-4">
+            <canvas id="revenueChart" data-revenuedata='<%= JSON.stringify(revenuedata) %>'></canvas>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap -mx-4">
+        <!-- Weekly Orders Chart -->
+        <div class="w-full md:w-1/2 lg:w-1/3 p-4">
+            <div class="bg-gray-800 rounded-lg shadow p-4">
+                <canvas id="ordersChart" data-ordersdata='<%= JSON.stringify(ordersData) %>'></canvas>
+            </div>
+        </div>
+    
+        <!-- Total Earning Statistics -->
+        <div class="w-full md:w-1/2 lg:w-1/3 p-4">
+            <div class="bg-gray-800 rounded-lg shadow p-4">
+                <div class="flex justify-center">
+                    <h2 class="text-xl mb-5 font-semibold">Earnings</h2>
+                </div>
+                <div class="text-center">
+                    <div class="mb-6">
+                        <p class="text-lg font-semibold text-indigo-600">Monthly</p>
+                        <p class="text-3xl font-bold text-indigo-600">
+                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR' }).format(monthlyEarnings) %>
+                        </p>
+                        <p class="text-gray-500">This month</p>
+                    </div>
+                    <div>
+                        <p class="text-lg font-semibold text-indigo-600">Yearly</p>
+                        <p class="text-3xl font-bold text-indigo-600">
+                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR' }).format(yearlyEarnings) %>
+                        </p>
+                        <p class="text-gray-500">This year</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+ 
+        <!-- hit rate Chart -->
+        <div class="w-full md:w-1/2 lg:w-1/3 p-4">
+            <div class="bg-gray-800 rounded-lg shadow p-4">
+                <canvas id="hitRateChart" data-hitratedata="<%= JSON.stringify(hitRateData) %>" ></canvas>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+<script src="/javascript/banner.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Revenue Chart
+    var revenueCtx = document.getElementById('revenueChart').getContext('2d');
+var revenueDataString = document.getElementById('revenueChart').getAttribute('data-revenuedata');
+var revenueData = JSON.parse(revenueDataString);
+
+var revenueChart = new Chart(revenueCtx, {
+    type: 'line',
+    data: revenueData, 
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+    // Weekly Orders Chart
+    var ordersDataString = document.getElementById('ordersChart').getAttribute('data-ordersdata');
+    var ordersData = JSON.parse(ordersDataString);
+
+    var ordersCtx = document.getElementById('ordersChart').getContext('2d');
+    var ordersChart = new Chart(ordersCtx, {
+        type: 'bar',
+        data: ordersData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    var hitRateCtx = document.getElementById('hitRateChart').getContext('2d');
+    var hitRateDataString = document.getElementById('hitRateChart').getAttribute('data-hitratedata');
+    var hitRateData = JSON.parse(hitRateDataString);
+
+    var hitRateChart = new Chart(hitRateCtx, {
+        type: 'line',
+        data: hitRateData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
 
 </body>
 

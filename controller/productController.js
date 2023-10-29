@@ -55,7 +55,7 @@ const addProduct = async (req, res) => {
             return imagePath;
         });
 
-        // Create a new product instance
+        // Create a new product instance 
         const newProduct = new productSchema({
             name,
             description,
@@ -310,6 +310,73 @@ const cancelOrder = async (req,res) => {
     }
 }
 
+// addwishlist
+const addwishlist = async (req,res) => {
+    try{
+
+        const { productId } = req.body;
+
+        const userId = req.session.user._id;
+
+        const user = await signupSchema.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const product = await productSchema.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        const isProductInWishlist = user.wishlist.some(item => item.productId.equals(productId));
+        if (isProductInWishlist) {
+            const user = await signupSchema.findByIdAndUpdate(
+                userId,
+                { $pull: { wishlist: { productId: productId } } },
+                { new: true }
+              );
+              await user.save();
+            return res.status(409).json({ success: false, message: 'Product already in wishlist' });
+        }
+
+        user.wishlist.push({ productId });
+
+        await user.save();
+
+        return res.status(200).json({ success: true, message: 'Product added to wishlist' });
+
+    }catch (error) {
+        console.error('Error updating addwishlist:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+
+//  deleteFromWishlist
+const deleteFromWishlist = async (req, res) => {
+    try {
+      const userId = req.session.user._id; 
+      const productId = req.params.productId; 
+  
+      const user = await signupSchema.findByIdAndUpdate(
+        userId,
+        { $pull: { wishlist: { productId: productId } } },
+        { new: true }
+      );
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json({ message: 'Product removed from wishlist' });
+    } catch (error) {
+      console.error('Error in deleteFromWishlist:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
+
 
 
 
@@ -321,5 +388,5 @@ module.exports = {
     updateProduct, productdelete,
     deleteProductCart, productImageEdit,
     stockPage, listProduct, unlistproduct,
-    count,cancelOrder,
+    count,cancelOrder,addwishlist,deleteFromWishlist,
 }

@@ -6,6 +6,14 @@
     <link href="/dist/output.css" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheet/cards1.css">
     <title>Document</title>
+    <style>
+        .truncate-text {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    </style>
 </head>
 <body>
 
@@ -19,23 +27,37 @@
             class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
             <% products.forEach(function(product) { %>
                 <!-- Product card template -->
-                <div class="w-full p-4">
+                <div class="w-full p-4 relative">
                     <div class="relative max-w-xs overflow-hidden rounded-lg bg-white shadow-md">
                         <a
                             href="<%= user ? 'userssingleproduct?id=' + product.id + '&userId=' + user.id : 'userssingleproduct?id=' + product.id %>">
                             <img class="h-60 w-full rounded-t-lg object-cover" src="<%= product.imageUrl[3] %>"
                                 alt="<%= product.name %>" style="object-fit: cover; object-position: center;" />
                         </a>
+                        <a href="#" title="Add to Wishlist" onclick="addToWishlist('<%= product.id %>')"
+                            class="absolute top-2 right-2">
+                            <div class="w-10 h-10 bg-white rounded-full flex justify-center items-center">
+                                <img class="w-6" src="https://cdn-icons-png.flaticon.com/128/4032/4032576.png" alt="w">
+                            </div>
+                        </a>
                         <div class="mt-4 px-5 pb-5">
                             <a href="#">
-                                <h5 class="text-xl font-semibold tracking-tight text-slate-900">
+                                <h5 class="text-xl truncate-text font-semibold tracking-tight text-slate-900">
                                     <%= product.name %>
                                 </h5>
                             </a>
                             <div class="mt-2.5 mb-5 flex items-center">
-                                <span class="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
-                                    <%= product.rating %>
-                                </span>
+                                <% if(product.count>=1){ %>
+                                    <span
+                                        class="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
+                                        <%= '5' %>
+                                    </span>
+                                    <% }else{ %>
+                                        <span
+                                        class="mr-2 rounded bg-gray-500 px-2.5 py-0.5 text-xs text-white font-semibold">
+                                        Out of stock
+                                    </span>
+                                    <% } %>
                             </div>
                             <div class="flex items-center justify-between">
                                 <p>

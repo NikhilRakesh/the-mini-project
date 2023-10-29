@@ -1,12 +1,100 @@
 const signupSchema = require('../modal/signupSchema')
 const productSchema = require('../modal/productSchema')
 const orderSchema = require('../modal/orderSchema')
-
-
 const bcrypt = require('bcrypt');
-const nodemailer = require('nodemailer');
+const uuid = require('uuid');
 
-// Create a transporter object using your email service's SMTP settings
+
+const fs = require('fs');
+const easyinvoice = require('easyinvoice');
+
+const generateInvoice = async (order, newOrder) => {
+    console.log('order', order);
+
+    const productsData = newOrder.products.map((product) => ({
+        quantity: product.quantity,
+        description: product.productName,
+        tax: 18,
+        price: (product.quantity * product.price).toFixed(2), // Calculate the total price for the product
+    }));
+
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+
+    const data = {
+        document: {
+            currency: 'INR',
+            taxNotation: 'gst',
+            marginTop: 25,
+            marginRight: 25,
+            marginLeft: 25,
+            marginBottom: 25,
+            // logo: 'path-to-your-logo.png', // Replace with your company logo path
+            // background: 'path-to-your-background.png', // Replace with your background image path
+        },
+        sender: {
+            company: 'LuxLifeHub',
+            address: '123 Main St, City, Country',
+            zip: '12345',
+            city: 'City',
+            country: 'India',
+        },
+        client: {
+            company: newOrder.customerName,
+            address: `${newOrder.shippingAddress.street}, ${newOrder.shippingAddress.city}, ${newOrder.shippingAddress.country}`,
+            zip: newOrder.shippingAddress.postalCode,
+            city: newOrder.shippingAddress.city,
+            country: newOrder.shippingAddress.country,
+        },
+        invoice: {
+            number: `INV-${order.id}`,
+            date: formattedDate,
+            dueDate: '2023-11-25',
+        },
+        products: productsData,
+    };
+
+
+    const result = await easyinvoice.createInvoice(data);
+
+    const path = require('path');
+    const baseDirectory = path.dirname(require.main.filename);
+    const folderPath = path.join(baseDirectory, 'public', 'invoices');
+    console.log('folderPath', folderPath);
+    const fileName = `invoice_${order.id}.pdf`;
+    const filePath = path.join(folderPath, fileName);
+
+    console.log('filePath', filePath);
+
+    if (!fs.existsSync(folderPath)) {
+        console.log('here');
+        fs.mkdirSync(folderPath, { recursive: true });
+    }
+
+    const pdfBuffer = Buffer.from(result.pdf, 'base64');
+
+    console.log('pdfBuffer', pdfBuffer);
+
+    try {
+        await fs.writeFileSync(filePath, pdfBuffer);
+        console.log('PDF saved successfully.');
+    } catch (error) {
+        console.error('Error saving PDF:', error);
+    }
+
+    return fileName;
+};
+
+
+
+const Razorpay = require('razorpay');
+const razorpay = new Razorpay({
+    key_id: 'rzp_test_eKsmdHCxXqAJL5',
+    key_secret: '8KDyobfGl0G5LJmXytthke6A',
+});
+
+
+const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -14,6 +102,7 @@ const transporter = nodemailer.createTransport({
         pass: 'bgnylfhumngvlepd'
     }
 });
+
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000);
@@ -45,7 +134,6 @@ const sendVerificationEmail = async (email, otp) => {
 const home = async (req, res) => {
     try {
         let user = null
-        console.log('home session', req.session.user);
         if (req.session.user) {
             const userId = req.session.user._id;
             user = await signupSchema.findById(userId);
@@ -57,6 +145,7 @@ const home = async (req, res) => {
         let passworderror = req.session.passworderror
         req.session.showErrorModal = false
         req.session.passworderror = false
+        req.session.invoiceId = null
         res.render('user/home', { SmartPhones, user, Laptops, showErrorModal, passworderror })
 
     }
@@ -238,20 +327,21 @@ const userssingleproduct = async (req, res) => {
         const product = await productSchema.findById(productId);
 
         if (!product) {
-            // Product with the specified ID was not found
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        const toast = req.session.toast
         let count = 3
-        res.render('user/userssingleproduct', { product, user, count, toast })
+        res.render('user/userssingleproduct', { product, user, count })
 
     } catch (error) {
         console.error('Error finding product:', error);
-        // Handle errors appropriately, e.g., return an error response
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+
+
+
 
 
 // view all poduct page 
@@ -275,19 +365,19 @@ const viewall = async (req, res) => {
         if (sortOption === 'lowToHigh') {
             products = await productSchema.find({ list: false, category: category })
                 .sort({ price: 1 })
-                .skip((page - 1) * perPage) 
+                .skip((page - 1) * perPage)
                 .limit(perPage);
 
             totalProductsCount = await productSchema.countDocuments({ category: category });
         } else if (sortOption === 'highToLow') {
-            products = await productSchema.find({list: false,  category: category })
+            products = await productSchema.find({ list: false, category: category })
                 .sort({ price: -1 })
                 .skip((page - 1) * perPage)
                 .limit(perPage);
 
             totalProductsCount = await productSchema.countDocuments({ category: category });
         } else {
-            products = await productSchema.find({list: false,  category: category })
+            products = await productSchema.find({ list: false, category: category })
                 .skip((page - 1) * perPage)
                 .limit(perPage);
 
@@ -405,11 +495,9 @@ const cart = async (req, res) => {
 // add to cart
 const addToCart = async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const userId = req.session.user._id;
 
         const user = await signupSchema.findById(userId).populate('shoppingCart.items.productId');
-
-
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -423,25 +511,21 @@ const addToCart = async (req, res) => {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        // Check if the product is already in the cart
         const existingCartItem = user.shoppingCart.items.find((item) =>
             item.productId.equals(productId)
         );
 
         if (existingCartItem) {
-            // If the product exists in the cart, increase its quantity
             existingCartItem.quantity += 1;
         } else {
-            // If the product is not in the cart, add it as a new item with quantity 1
             user.shoppingCart.items.push({
                 productId: productId,
                 quantity: 1,
             });
         }
-        // Save the updated user object with the shopping cart
         await user.save();
-        req.session.toast = true
-        res.redirect('back')
+        // req.session.toast = true
+        res.status(200).json({ message: 'Product added to cart' });
     } catch (error) {
         console.error('Error adding to cart:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -821,7 +905,7 @@ const checkout = async (req, res) => {
             currency: 'INR',
         }).format(finalTotal);
 
-        res.render('user/checkout', { user ,FormatedtotalPrice,formattedDiscount,formattedFinalTotal})
+        res.render('user/checkout', { user, FormatedtotalPrice, formattedDiscount, formattedFinalTotal })
 
     } catch (error) {
         console.error('Error in deleteAdress:', error);
@@ -914,11 +998,12 @@ const confirmOrder = async (req, res) => {
 
         user.shoppingCart.items = [];
 
+
         await newOrder.save();
         await user.save();
 
 
-        res.redirect('/home')
+        res.redirect('/ordersuccessfulpage')
 
 
     } catch (error) {
@@ -983,6 +1068,8 @@ const buyNow = async (req, res) => {
         const productId = req.query.productId
         const product = await productSchema.findById(productId);
 
+
+
         res.render('user/buyNow', { product, user })
     } catch (error) {
         console.error('Error in buyNow:', error);
@@ -990,15 +1077,15 @@ const buyNow = async (req, res) => {
     }
 }
 
-    
+
 
 const buyNoworder = async (req, res) => {
     try {
-console.log('buynoworder',req.body);
+        console.log('buynoworder', req.body);
         const userId = req.session.user._id;
 
         const user = await signupSchema
-        .findById(userId)
+            .findById(userId)
 
         const productId = req.query.productId
         const product = await productSchema.findById(productId);
@@ -1032,6 +1119,242 @@ console.log('buynoworder',req.body);
     }
 }
 
+const wishlist = async (req, res) => {
+    try {
+        console.log('here wlist');
+        const userId = req.session.user._id;
+
+        const user = await signupSchema.findById(userId).populate('wishlist.productId');
+
+
+        res.render('user/wishlist', { user })
+
+    } catch (error) {
+        console.error('Error in wishlist:', error);
+        res.redirect('back')
+    }
+}
+
+
+
+const createOrder = async (req, res) => {
+    try {
+        const currency = 'INR';
+        let { amount, productid } = req.body;
+        amount = amount.replace(/[^0-9.]/g, '');
+        const integerValue = parseInt(amount, 10);
+
+        const userId = req.session.user._id;
+        const user = await signupSchema.findById(userId);
+
+
+        const Amount = integerValue * 100
+        let newOrder = null
+        if (productid === null) {
+
+
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const cartProducts = await Promise.all(user.shoppingCart.items.map(async (cartItem) => {
+                const populatedCartItem = await signupSchema.populate(cartItem, {
+                    path: 'productId',
+                    model: 'Product'
+                });
+
+                const productImages = populatedCartItem.productId.imageUrl
+
+                return {
+                    product: populatedCartItem.productId,
+                    quantity: cartItem.quantity,
+                    images: productImages
+                };
+            }))
+
+            const totalPrice = cartProducts.reduce((total, cartItem) => {
+                return total + (cartItem.product.price * cartItem.quantity);
+            }, 0);
+
+            newOrder = new orderSchema({
+                user: user._id,
+                customerName: user.username,
+                orderDate: new Date(),
+                products: cartProducts.map((cartItem) => ({
+                    productName: cartItem.product.name,
+                    quantity: cartItem.quantity,
+                    price: cartItem.product.price,
+                    imageUrl: cartItem.images
+                })),
+                totalPrice: totalPrice,
+                shippingAddress: user.address.find((address) => address.primary),
+            });
+        } else {
+
+            const product = await productSchema.findById(productid);
+
+            newOrder = new orderSchema({
+                user: user._id,
+                customerName: user.username,
+                orderDate: new Date(),
+                products: [
+                    {
+                        productName: product.name,
+                        quantity: 1,
+                        price: product.price,
+                        imageUrl: product.imageUrl,
+                    },
+                ],
+                totalPrice: product.price,
+                shippingAddress: user.address.find((address) => address.primary),
+            });
+
+
+
+        }
+
+
+
+        razorpay.orders.create({
+            amount: Amount,
+            currency: currency
+        }, async (error, order) => {
+            if (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                try {
+                    console.log('newOrder', newOrder);
+                    const pdfLink = await generateInvoice(order, newOrder);
+                    req.session.invoiceId = pdfLink
+                    res.json({ order, pdfLink });
+                } catch (invoiceError) {
+                    console.error('Error generating invoice:', invoiceError);
+                    res.status(500).json({ error: 'Error generating invoice' });
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error in wishlist:', error);
+        res.redirect('back')
+    }
+}
+
+
+const ordersuccessfulpage = async (req, res) => {
+    try {
+        const invoiceId = req.session.invoiceId
+        console.log('invoiceId ', invoiceId);
+        res.render('user/ordersuccessfull', { invoiceId })
+
+    } catch (error) {
+        console.error('Error in ordersuccessfulpage:', error);
+        res.redirect('back')
+    }
+}
+
+const cashondelivery = async (req, res) => {
+    try {
+
+        const { amount, productid } = req.body
+
+        const userId = req.session.user._id;
+        const user = await signupSchema.findById(userId);
+
+        const generateUniqueID = () => {
+            return uuid.v4(); 
+        };
+
+        const uniqueOrderID = generateUniqueID();
+
+
+        const order = {
+            id: uniqueOrderID,
+            amount: amount,
+            currency: "INR"
+        }
+
+        let newOrder = null
+        if (productid === null) {
+
+
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const cartProducts = await Promise.all(user.shoppingCart.items.map(async (cartItem) => {
+                const populatedCartItem = await signupSchema.populate(cartItem, {
+                    path: 'productId',
+                    model: 'Product'
+                });
+
+                const productImages = populatedCartItem.productId.imageUrl
+
+                return {
+                    product: populatedCartItem.productId,
+                    quantity: cartItem.quantity,
+                    images: productImages
+                };
+            }))
+
+            const totalPrice = cartProducts.reduce((total, cartItem) => {
+                return total + (cartItem.product.price * cartItem.quantity);
+            }, 0);
+
+            newOrder = new orderSchema({
+                user: user._id,
+                customerName: user.username,
+                orderDate: new Date(),
+                products: cartProducts.map((cartItem) => ({
+                    productName: cartItem.product.name,
+                    quantity: cartItem.quantity,
+                    price: cartItem.product.price,
+                    imageUrl: cartItem.images
+                })),
+                totalPrice: totalPrice,
+                shippingAddress: user.address.find((address) => address.primary),
+            });
+        } else {
+
+            const product = await productSchema.findById(productid);
+
+            newOrder = new orderSchema({
+                user: user._id,
+                customerName: user.username,
+                orderDate: new Date(),
+                products: [
+                    {
+                        productName: product.name,
+                        quantity: 1,
+                        price: product.price,
+                        imageUrl: product.imageUrl,
+                    },
+                ],
+                totalPrice: product.price,
+                shippingAddress: user.address.find((address) => address.primary),
+            });
+
+
+
+        }
+
+
+        const pdfLink = await generateInvoice(order, newOrder);
+        console.log(' req.session.invoiceId:', pdfLink);
+        req.session.invoiceId = pdfLink
+
+        res.json({ message: 'Cash on Delivery request received' });
+
+
+    } catch (error) {
+        console.error('Error in cashondelivery:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 
 
 
@@ -1047,5 +1370,6 @@ module.exports = {
     forgototpverify, decreaseQuantity, profile,
     updateProfile, addAdress, editAdress, updateadress,
     deleteAdress, checkout, primary, confirmOrder, myOrder,
-    falser, buyNow, buyNoworder
+    falser, buyNow, buyNoworder, wishlist, createOrder,
+    ordersuccessfulpage, cashondelivery,
 }

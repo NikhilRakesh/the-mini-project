@@ -88,7 +88,7 @@
                             <!-- Add to Cart Button -->
                             <% if (user) { %>
                                 <button>
-                                    <a href="/addtocart/<%= user._id %>/<%= product._id %>"
+                                    <a href="#" onclick="addToCart('<%= user._id %>', '<%=  product._id %>', '<%= product.name %>')"
                                         class="flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -272,11 +272,28 @@
         }
     </script>
 
-    <% if ( toast ) { %>
-        <script>
-            yourOnclickFunction()
-        </script>
-        <% } %>
+<script>
+    function addToCart(userId, productId, productName) {
+      fetch(`/addtocart/${userId}/${productId}`,{
+      method: 'GET', // Set the request method to GET
+    })
+        .then((response) => {
+          if (response.ok) {
+            yourOnclickFunction() 
+          } else {
+            Toastify({
+              text: `Failed to add ${productName} to cart`,
+              duration: 3000,
+              gravity: 'bottom',
+              backgroundColor: 'red', 
+            }).showToast();
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+  </script>
 
             <script>
                 $("#mainImage").ezPlus();

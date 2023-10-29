@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ordersuccessful</title>
+    <link href="/dist/output.css" rel="stylesheet">
+
+    <style>
+        @keyframes scale {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-scale-100 {
+  animation: scale 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) 1;
+  animation-fill-mode: both;
+}
+
+    </style>                                  
+</head>
+<body>
+
+    <div class="h-screen flex justify-center items-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg transform scale-0 animate-scale-100 transition-transform">
+          <svg class="w-12 h-12 text-green-400 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path fill="none" stroke="currentColor" stroke-width="2" d="M22 11.08V12a10 10 0 1 1-10-10" />
+            <path fill="none" stroke="currentColor" stroke-width="2" d="M22 4L12 14.01l-3-3" />
+          </svg>
+          <h2 class="text-2xl text-gray-900 font-semibold mb-4">Your order has been placed successfully.</h2>
+          <p class="text-gray-600 mb-8">Thank you for your order. Your items will be delivered shortly.</p>
+          <div class="flex justify-between" >
+              <a href="/home" class="text-white bg-blue-600 hover:bg-blue-800 focus-ring-4 focus-outline-none focus-ring-blue-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                Continue Shopping
+              </a>
+              
+              <% console.log('ejs invoice',invoiceId); %>
+              <a href="/invoices/<%= invoiceId %>" download class="text-white bg-orange-400 hover:bg-orange-600 focus-ring-4 focus-outline-none focus-ring-blue-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                Download Invoice
+            </a>
+          </div>
+        </div>
+      </div>
+      
+    
+</body>
+</html>

@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
     <link rel="stylesheet" href="/stylesheet/cards1.css">
     <title>View all</title>
     <style>
         .truncate-text {
-      max-width: 200px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 
@@ -35,15 +36,61 @@
                 </select>
             </div>
 
-            <div class="flex flex-col">
-                <label for="brandFilter" class="text-gray-600 mb-2">Brand:</label>
-                <select id="brandFilter" class="border rounded-md py-1 px-2">
-                    <option value="all">All Brands</option>
-                    <option value="brand1">Brand 1</option>
-                    <option value="brand2">Brand 2</option>
-                    <!-- Add more brand options as needed -->
-                </select>
+            <div class="flex flex-col space-y-2">
+                <label class="text-gray-600 mb-2">Filter by Attributes:</label>
+
+                <!-- Internal Storage Dropdown -->
+                <div class="relative inline-block text-gray-700">
+                    <select id="internalStorageFilter"
+                        class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="all">Internal Storage</option>
+                        <option value="8gb">8GB</option>
+                        <option value="16gb">16GB</option>
+                        <!-- Add more internal storage options as needed -->
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path
+                                d="M9.293 11.293a1 1 0 011.414 0l5 5a1 1 0 01-1.414 1.414l-4.293-4.293a1 1 0 00-1.414 0l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Camera Dropdown -->
+                <div class="relative inline-block text-gray-700">
+                    <select id="cameraFilter"
+                        class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="all">Camera</option>
+                        <option value="8mp">8MP</option>
+                        <option value="12mp">12MP</option>
+                        <!-- Add more camera options as needed -->
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path
+                                d="M9.293 11.293a1 1 0 011.414 0l5 5a1 1 0 01-1.414 1.414l-4.293-4.293a1 1 0 00-1.414 0l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Brands Dropdown -->
+                <div class="relative inline-block text-gray-700">
+                    <select id="brandFilter"
+                        class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="all">Brands</option>
+                        <option value="brand1">Brand 1</option>
+                        <option value="brand2">Brand 2</option>
+                        <!-- Add more brand options as needed -->
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path
+                                d="M9.293 11.293a1 1 0 011.414 0l5 5a1 1 0 01-1.414 1.414l-4.293-4.293a1 1 0 00-1.414 0l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0z" />
+                        </svg>
+                    </div>
+                </div>
             </div>
+
         </div>
 
         <section class="">
@@ -54,13 +101,19 @@
                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <% products.forEach(function(product, index) { %>
                     <!-- Product card template -->
-                    <div class="w-full p-4">
+                    <div class="w-full p-4 relative">
                         <div class="relative max-w-xs overflow-hidden rounded-lg bg-white shadow-md">
                             <a
                                 href="<%= user ? 'userssingleproduct?id=' + product.id + '&userId=' + user.id : 'userssingleproduct?id=' + product.id %>">
                                 <img class="h-60 w-full rounded-t-lg object-cover" src="<%= product.imageUrl[3] %>"
                                     alt="<%= product.name %>" style="object-fit: cover; object-position: center;" />
                             </a>
+                            <a href="#" title="Add to Wishlist" id="wishlistIcon_<%= product.id %>" data-product-id="<%= product.id %>"
+                                class="absolute top-2 right-2">
+                                <div class="w-10 h-10 bg-white rounded-full flex justify-center items-center">
+                                    <img class="w-6" src="https://cdn-icons-png.flaticon.com/128/4032/4032576.png" alt="w">
+                                </div>
+                            </a>                            
                             <div class="mt-4 px-5 pb-5">
                                 <a href="#">
                                     <h5 class="text-xl truncate-text font-semibold tracking-tight text-slate-900">
@@ -69,16 +122,15 @@
                                 </a>
                                 <div class="mt-2.5 mb-5 flex items-center">
                                     <% if(product.count>=1){ %>
-                                        <span
-                                            class="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
+                                        <span class="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
                                             <%= '5' %>
                                         </span>
                                         <% }else{ %>
                                             <span
-                                            class="mr-2 rounded bg-gray-500 px-2.5 py-0.5 text-xs text-white font-semibold">
-                                            Out of stock
-                                        </span>
-                                        <% } %>
+                                                class="mr-2 rounded bg-gray-500 px-2.5 py-0.5 text-xs text-white font-semibold">
+                                                Out of stock
+                                            </span>
+                                            <% } %>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <p>
@@ -146,7 +198,7 @@
             </div>
         </section>
 
-
+        <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 </body>
 
@@ -169,8 +221,57 @@
             }
         </script>
 
+<script>
+   function addToWishlist(productId) {
+    fetch('/addwishlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId: productId }),
+    })
+    .then((response) => {
+        if (response.status === 200) {
+                // Product was added to the wishlist
+                Toastify({
+                    text: 'Added to Wishlist!',
+                    duration: 3000, 
+                    gravity: 'bottom', 
+                    position: 'center', 
+                    backgroundColor: 'green',
+                }).showToast();
+            } else if (response.status === 409) {
+                // Product already exists in the wishlist
+                Toastify({
+                    text: 'Removed from Wishlist',
+                    duration: 3000, 
+                    gravity: 'bottom', 
+                    position: 'center', 
+                    backgroundColor: 'red',
+                }).showToast();
+            } else {
+                // Failed to add to wishlist
+                Toastify({
+                    text: 'Failed to add to Wishlist',
+                    duration: 3000,
+                    gravity: 'bottom', 
+                    position: 'center', 
+                    backgroundColor: 'rorange', 
+                }).showToast();
+            }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
 
+document.querySelectorAll('[id^="wishlistIcon_"]').forEach((element) => {
+    element.addEventListener('click', function () {
+        const productId = this.getAttribute('data-product-id');
+        addToWishlist(productId);
+    });
+});
 
-
+</script>
 
 </html>

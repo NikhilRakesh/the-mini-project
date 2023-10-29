@@ -32,7 +32,7 @@ const productSchema = new mongoose.Schema({
     type: Number, 
     min: 0, 
     max: 5, 
-    default: 0, 
+    default: 5, 
   },
   list: {
     type: Boolean,

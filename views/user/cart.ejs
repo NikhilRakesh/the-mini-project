@@ -212,13 +212,6 @@
                     saveElement.textContent = `You will save ${formateddiscountAmount} on this order`;
                 }
 
-
-
-
-
-
-
-
                 fetch(`/decreaseQuantity/${userId}/${productId}`, { method: 'GET' })
                     .then(response => {
                         if (!response.ok) {

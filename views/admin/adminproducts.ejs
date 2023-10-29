@@ -2,260 +2,286 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/dist/output.css" rel="stylesheet">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/dist/output.css" rel="stylesheet">
+  <title>Document</title>
 </head>
 <style>
-   /* Custom CSS class for text truncation with extended max-width */
-.truncate-text {
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  /* Custom CSS class for text truncation with extended max-width */
+  .truncate-text {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    width: 0.4em;
+  }
 
+  .scrollbar-hidden::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  } 
 </style>
 
 <header>
-    <%- include('../partial/adminheader.ejs') %>
+  <%- include('../partial/adminheader.ejs') %>
 </header>
 
 
 <section class="mt-10">
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
-        <div class="flex justify-between items-center mb-4 px-4">
-            <!-- Search Bar -->
-            <input id="search" type="text" placeholder="Search Products"
-                class="block w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 w-1/2 dark:text-white" />
-            <!-- Add Product Button -->
-            <button type="button" onclick="openAddProductModal()"
-                class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                Add Product
-            </button>
-        </div>
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <caption
-                class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                Our products
-            </caption>
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Product name
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Color
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Category
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Price
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Edit</span>
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        delete
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <% products.forEach(function(product) { %>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row"
-                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap w-48 dark:text-white truncate-text">
-                            <%= product.name %>
-                        </th>
-                        <td class="px-6 py-4">
-                            <%= product.color %>
-                        </td>
-                        <td class="px-6 py-4">
-                            <%= product.category %>
-                        </td>
-                        <td class="px-6 py-4">
-                            <%= product.price %>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <a href="/productedit?id=<%= product._id %>"
-                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button  onclick="openCustomModal('<%= product._id %>   ')" class="font-medium text-red-600 dark:text-red-500 hover:underline" type="button" >delete</button>
-                            <!-- <a href="/productdelete?id=<%= product._id %>"
-                                class="font-medium text-red-600 dark:text-red-500 hover:underline">delete</a> -->
-                        </td>
-                    </tr>
-                    <% }); %>
-            </tbody>
-        </table>
+    <div class="flex justify-between items-center mb-4 px-4">
+      <!-- Search Bar -->
+      <input id="search" type="text" placeholder="Search Products"
+        class="block w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 w-1/2 dark:text-white" />
+      <!-- Add Product Button -->
+      <button type="button" onclick="openAddProductModal()"
+        class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        Add Product
+      </button>
     </div>
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+        Our products
+      </caption>
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            Product name
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Color
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Category
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Price
+          </th>
+          <th scope="col" class="px-6 py-3">
+            <span class="sr-only">Edit</span>
+          </th>
+          <th scope="col" class="px-6 py-3">
+            delete
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(function(product) { %>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap w-48 dark:text-white truncate-text">
+              <%= product.name %>
+            </th>
+            <td class="px-6 py-4">
+              <%= product.color %>
+            </td>
+            <td class="px-6 py-4">
+              <%= product.category %>
+            </td>
+            <td class="px-6 py-4">
+              <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                        }).format(product.price) %>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <a href="/productedit?id=<%= product._id %>"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button onclick="openCustomModal('<%= product._id %>   ')"
+                class="font-medium text-red-600 dark:text-red-500 hover:underline" type="button">delete</button>
+              <!-- <a href="/productdelete?id=<%= product._id %>"
+                                class="font-medium text-red-600 dark:text-red-500 hover:underline">delete</a> -->
+            </td>
+          </tr>
+          <% }); %>
+      </tbody>
+    </table>
+  </div>
 </section>
 
-
-<body class="bg-white text-white dark:bg-gray-900 dark:text-white">
+  <body class="bg-white text-white dark:bg-gray-900 dark:text-white">
     <!-- Add Product Modal -->
     <div id="add-product-modal"
-        class="fixed inset-0 flex items-center justify-center z-50 hidden bg-gray-900 bg-opacity-50">
-        <div class="bg-gray-800 p-4 w-full max-w-md mx-auto rounded-lg shadow-lg relative">
-            <!-- Close Modal Button -->
-            <button type="button" onclick="closeAddProductModal()"
-                class="absolute top-2 right-2 text-gray-300 bg-transparent hover:bg-gray-600 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
-                <!-- Close button icon here -->
-                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                </svg>
-            </button>
-            <!-- Modal Content -->
-            <div class="text-center">
-                <h2 class="text-2xl font-semibold mb-4 text-gray-200">Add Product</h2>
-            </div>
-            <form class="space-y-4" action="/addproduct" method="post" enctype="multipart/form-data">
-                <!-- Product Name -->
-                <div>
-                    <label for="product-name" class="block mb-2 text-sm font-medium text-white-900">Product
-                        Name</label>
-                    <input type="text" name="name" id="product-name"
-                        class="w-full  p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                </div>
-                <!-- Description -->
-                <div>
-                    <label for="product-description"
-                        class="block mb-2 text-sm font-medium text-white-900">Description</label>
-                    <textarea name="description" id="product-description"
-                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
-                </div>
-                <!-- Price -->
-                <div>
-                    <label for="product-price" class="block mb-2 text-sm font-medium text-white-900">Price</label>
-                    <input type="number" name="price" id="product-price"
-                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                </div>
-                <!-- Category -->
-                <div>
-                    <label for="product-category" class="block mb-2 text-sm font-medium text-white-900">Category</label>
-                    <select name="category" id="product-category"
-                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <!-- Add dropdown options here -->
-                        <% categories.forEach(function(category) { %>
-                            <option value=<%=category.name %>><%= category.name %>
-                            </option>
-                            <% }); %>
-                                <!-- Add more categories as needed -->
-                    </select>
-                </div>
-
-                <!-- Color -->
-                <div>
-                    <label for="product-color" class="block mb-2 text-sm font-medium text-white-900">Color</label>
-                    <input type="text" name="color" id="product-color"
-                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                </div>
-                <!-- Image -->
-                <div>
-                    <label for="product-image" class="block mb-2 text-sm font-medium text-white-900">Image</label>
-                    <input type="file" name="image" id="product-image" accept=".jpg, .jpeg, .png, .gif"
-                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        multiple>
-                </div>
-                <!-- Rating -->
-
-                <!-- Submit Button -->
-                <div class="text-center">
-                    <div class="flex justify-between">
-                        <button type="submit"
-                            class="px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Add
-                            Product</button>
-
-                    </div>
-                </div>
-
-            </form>
-
+      class="fixed inset-0 flex items-center justify-center z-50 hidden bg-gray-900 bg-opacity-50">
+      <div class="bg-gray-800 p-4 w-full max-w-md mx-auto rounded-lg shadow-lg relative scrollbar-hidden"
+        style="max-height: 90vh; overflow-y: auto;">
+        <!-- Close Modal Button -->
+        <button type="button" onclick="closeAddProductModal()"
+          class="absolute top-2 right-2 text-gray-300 bg-transparent hover:bg-gray-600 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+          <!-- Close button icon here -->
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+          </svg>
+        </button>
+        <!-- Modal Content -->
+        <div class="text-center">
+          <h2 class="text-2xl font-semibold mb-4 text-gray-200">Add Product</h2>
         </div>
+        <form class="space-y-4" action="/addproduct" method="post" enctype="multipart/form-data">
+          <!-- Product Name -->
+          <div>
+            <label for="product-name" class="block mb-2 text-sm font-medium text-white-900">Product
+              Name</label>
+            <input type="text" name="name" id="product-name"
+              class="w-full  p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+          </div>
+          <!-- Description -->
+          <div>
+            <label for="product-description" class="block mb-2 text-sm font-medium text-white-900">Description</label>
+            <textarea name="description" id="product-description"
+              class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+          </div>
+          <!-- Price -->
+          <div>
+            <label for="product-price" class="block mb-2 text-sm font-medium text-white-900">Price</label>
+            <input type="number" name="price" id="product-price"
+              class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+          </div>
+          <!-- Category -->
+          <div>
+            <label for="product-category" class="block mb-2 text-sm font-medium text-white-900">Category</label>
+            <select name="category" id="product-category"
+              class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              <!-- Add dropdown options here -->
+              <% categories.forEach(function(category) { %>
+                <option value=<%=category.name %>><%= category.name %>
+                </option>
+                <% }); %>
+                  <!-- Add more categories as needed -->
+            </select>
+          </div>
+
+          <!-- Color -->
+          <div>
+            <label for="product-color" class="block mb-2 text-sm font-medium text-white-900">Color</label>
+            <input type="text" name="color" id="product-color"
+              class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+          </div>
+
+          <!-- Image -->
+          <div>
+            <label for="product-image" class="block mb-2 text-sm font-medium text-white-900">Image</label>
+            <input type="file" name="image" id="product-image" accept=".jpg, .jpeg, .png, .gif"
+              class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white" multiple>
+          </div>
+          <!-- Rating -->
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <div class="flex justify-between">
+              <button type="submit"
+                class="px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Add
+                Product</button>
+
+            </div>
+          </div>
+
+        </form>
+
+      </div>
     </div>
-</body>
+  </body>
+
 
 <main>
-    <!-- <button id="open-modal-button" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+  <!-- <button id="open-modal-button" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
         Toggle modal
       </button> -->
-      
-      <div id="custom-modal" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        
-          <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-              <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"></div>
-              <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                  <div class="relative transform overflow-hidden rounded-lg bg-gray-800 text-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div class="bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                      <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                          <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c-1.73 0-2.813-1.874-1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                          </svg>
-                        </div>
-                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                          <h3 class="text-base font-semibold leading-6 text-gray-300" id="modal-title">Delete product</h3>
-                          <div class="mt-2">
-                            <p class="text-sm text-gray-500">Are you sure you want to Delete the product? All of your data will be permanently removed. This action cannot be undone.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="bg-gray-700 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                        <a id="delete-product-link" href="">
-                            <button type="button"  class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Delete Product</button>
-                        </a>
-                      <button type="button" onclick="closeCustomModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-300 shadow-sm ring-1 ring-inset ring-gray-500 hover:bg-gray-600 sm:mt-0 sm:w-auto">Cancel</button>
-                    </div>
+
+  <div id="custom-modal" tabindex="-1"
+    class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+
+    <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"></div>
+      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div
+            class="relative transform overflow-hidden rounded-lg bg-gray-800 text-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+            <div class="bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div
+                  class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c-1.73 0-2.813-1.874-1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h3 class="text-base font-semibold leading-6 text-gray-300" id="modal-title">Delete product</h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-500">Are you sure you want to Delete the product? All of your data will
+                      be permanently removed. This action cannot be undone.</p>
                   </div>
                 </div>
               </div>
             </div>
-            
+            <div class="bg-gray-700 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <a id="delete-product-link" href="">
+                <button type="button"
+                  class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Delete
+                  Product</button>
+              </a>
+              <button type="button" onclick="closeCustomModal()"
+                class="mt-3 inline-flex w-full justify-center rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-300 shadow-sm ring-1 ring-inset ring-gray-500 hover:bg-gray-600 sm:mt-0 sm:w-auto">Cancel</button>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
 
-     
+  </div>
 
-      <div class="flex justify-center  mt-5 mb-5">
-        <nav aria-label="Page navigation example">
-            <ul class="flex items-center -space-x-px h-8 text-sm">
-              <% if (currentPage > 1) { %>
+
+
+  <div class="flex justify-center  mt-5 mb-5">
+    <nav aria-label="Page navigation example">
+      <ul class="flex items-center -space-x-px h-8 text-sm">
+        <% if (currentPage> 1) { %>
+          <li>
+            <a href="/adminproducts?page=<%= currentPage - 1 %>"
+              class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+              <span class="sr-only">Previous</span>
+              <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M5 1 1 5l4 4" />
+              </svg>
+            </a>
+          </li>
+          <% } %>
+            <% for (let i=1; i <=totalPages; i++) { %>
               <li>
-                <a href="/adminproducts?page=<%= currentPage - 1 %>" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <span class="sr-only">Previous</span>
-                  <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-                  </svg>
+                <a href="/adminproducts?page=<%= i %>"
+                  class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white<%= i === currentPage ? ' text-blue-600 bg-blue-50 border-blue-300' : '' %>">
+                  <%= i %>
                 </a>
               </li>
               <% } %>
-              <% for (let i = 1; i <= totalPages; i++) { %>
-                <li>
-                  <a href="/adminproducts?page=<%= i %>"
-                    class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white<%= i === currentPage ? ' text-blue-600 bg-blue-50 border-blue-300' : '' %>">
-                    <%= i %>
-                  </a>
-                </li>
-              <% } %>
-              <% if (currentPage < totalPages) { %>
-              <li>
-                <a href="/adminproducts?page=<%= currentPage + 1 %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <span class="sr-only">Next</span>
-                  <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                  </svg>
-                </a>
-              </li>
-              <% } %>
-            </ul>
-          </nav>
-      </div>
+                <% if (currentPage < totalPages) { %>
+                  <li>
+                    <a href="/adminproducts?page=<%= currentPage + 1 %>"
+                      class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                      <span class="sr-only">Next</span>
+                      <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="m1 9 4-4-4-4" />
+                      </svg>
+                    </a>
+                  </li>
+                  <% } %>
+      </ul>
+    </nav>
+  </div>
 
 
 </main>
@@ -263,24 +289,24 @@
 
 <script>
 
-    function openCustomModal(productId) {
-      const modal = document.getElementById("custom-modal");
-      const deleteProductLink = document.getElementById("delete-product-link");
-      
-      deleteProductLink.href = `/productdelete?id=${productId}`;
-  
-      console.log(productId);
-      modal.classList.remove("hidden");
-    }
-  
-    function closeCustomModal() {
-      const modal = document.getElementById("custom-modal");
-      modal.classList.add("hidden");
-    }
-  </script>
-  
-  
-  
+  function openCustomModal(productId) {
+    const modal = document.getElementById("custom-modal");
+    const deleteProductLink = document.getElementById("delete-product-link");
+
+    deleteProductLink.href = `/productdelete?id=${productId}`;
+
+    console.log(productId);
+    modal.classList.remove("hidden");
+  }
+
+  function closeCustomModal() {
+    const modal = document.getElementById("custom-modal");
+    modal.classList.add("hidden");
+  }
+</script>
+
+
+
 
 
 

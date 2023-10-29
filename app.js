@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const userrouter = require('./routes/userrouter')
 const adminrouter = require('./routes/adminrouter')
+const productrouter = require('./routes/productrouter')
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -38,6 +39,7 @@ const noCacheMiddleware = (req, res, next) => {
 
 app.use(noCacheMiddleware);
 
+app.use('/',productrouter)
 app.use('/',userrouter)
 app.use('/',adminrouter)
 

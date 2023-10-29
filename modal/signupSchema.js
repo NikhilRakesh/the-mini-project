@@ -26,6 +26,19 @@ const addressSchema = new mongoose.Schema({
 });
 
 
+const wishlistItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now, 
+  },
+});
+
+
 
 const signupschema = new mongoose.Schema({
   username: {
@@ -64,6 +77,7 @@ const signupschema = new mongoose.Schema({
     items: [cartItemSchema],
   },
   address:[addressSchema],
+  wishlist: [wishlistItemSchema],
  
 });
 

@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
 const usercontroller = require('../controller/userController')
-const productController = require('../controller/productController')
 const { userBlocked,userSessionMiddleare }= require('../Middleware/userAuth')
 
 
@@ -22,7 +21,6 @@ router.get('/forgotpassword', usercontroller.forgotpassword);
 router.post('/forgotpasswordotp',usercontroller.forgotpasswordotp) 
 router.get('/forgotpasswordotppage', usercontroller.forgotpasswordotppage);
 router.post('/forgototpverify',usercontroller.forgototpverify) 
-router.get('/deleteProductCart/:userId/:productId',userSessionMiddleare,productController.deleteProductCart) 
 router.get('/decreaseQuantity/:userId/:productId',userSessionMiddleare,usercontroller.decreaseQuantity) 
 router.get('/profile',userBlocked,userSessionMiddleare,usercontroller.profile) 
 router.post('/updateProfile',userSessionMiddleare,usercontroller.updateProfile)
@@ -37,7 +35,11 @@ router.get('/myOrder',userBlocked,userSessionMiddleare,usercontroller.myOrder)
 router.get('/falser',usercontroller.falser)
 router.get('/buyNow',userBlocked,userSessionMiddleare,usercontroller.buyNow)
 router.get('/buyNoworder',userBlocked,userSessionMiddleare,usercontroller.buyNoworder)
-router.get('/cancelorder',userSessionMiddleare,productController.cancelOrder) 
+router.get('/wishlist',userBlocked,userSessionMiddleare,usercontroller.wishlist)
+router.post('/createOrder',userBlocked,userSessionMiddleare,usercontroller.createOrder)
+router.get('/ordersuccessfulpage',userBlocked,userSessionMiddleare,usercontroller.ordersuccessfulpage)
+router.post('/cashondelivery',userBlocked,userSessionMiddleare,usercontroller.cashondelivery)
+
 
 
 
