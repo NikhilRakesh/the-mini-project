@@ -39,39 +39,8 @@ router.get('/wishlist',userBlocked,userSessionMiddleare,usercontroller.wishlist)
 router.post('/createOrder',userBlocked,userSessionMiddleare,usercontroller.createOrder)
 router.get('/ordersuccessfulpage',userBlocked,userSessionMiddleare,usercontroller.ordersuccessfulpage)
 router.post('/cashondelivery',userBlocked,userSessionMiddleare,usercontroller.cashondelivery)
+router.get('/buyNowConfirorder',userBlocked,userSessionMiddleare,usercontroller.buyNowConfirorder)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 
 
 

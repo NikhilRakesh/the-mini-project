@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
     <title>Document</title>
     <link href="/dist/output.css" rel="stylesheet">
 
@@ -88,12 +89,13 @@
                                         <!-- $2999 -->
                                     </td>
                                     <td class="px-6 py-4">
-                                        <a href="/catageoryedit/<%=category._id%>"  class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                        <a href="/catageoryedit/<%=category._id%>"
+                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
 
                                     </td>
                                     <td class="px-6 py-4">
-                                        <a href="/deleteCatageory/<%=category._id%>" class="text-red-600" >Delete</a>
-                                        
+                                        <a href="/deleteCatageory/<%=category._id%>" class="text-red-600">Delete</a>
+
                                     </td>
                                 </tr>
                                 <% }); %>
@@ -123,7 +125,7 @@
                 <div class="text-center">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-200">Add Category</h2>
                 </div>
-                <form class="space-y-4" action="/addCategory" method="post">
+                <form id="category-form" class="space-y-4">
                     <!-- Category Name -->
                     <div>
                         <label for="category-name" class="block mb-2 text-sm font-medium text-white-900">Category
@@ -133,17 +135,71 @@
                     </div>
                     <!-- Submit Button -->
                     <div class="text-center">
-                        <button type="submit"
-                            class="px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Add
+                        <button type="button" id="submit-button"
+                            class="px-6 py-3 text-sm font-medium text-white bg-blue-600 hover-bg-blue-700 rounded-md focus-ring focus-ring-blue-500 focus-outline-none">Add
                             Category</button>
                     </div>
                 </form>
+
+
             </div>
         </div>
     </main>
 
+    <div id="toast-container"></div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+    const form = document.getElementById('category-form');
+    const submitButton = document.getElementById('submit-button');
+
+    submitButton.addEventListener('click', async (e) => {
+        e.preventDefault();  // Prevent the default form submission
+
+        const name = document.getElementById('category-name').value;
+        const formData = new FormData();
+        formData.append('name', name);
+
+        try {
+            const response = await fetch('/addCategory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name }),
+            });
+
+            if (response.status == 200) {
+                // Handle the success case
+                console.log('Category added successfully');
+                window.location.href = '/adminCatageory';
+                console.log('theree11');
+
+            } else {
+                const data = await response.json();
+                if (data.error === 'Category already exists') {
+                    console.log('hereee123');
+                    Toastify({
+                        text: 'Category already exists',
+                        duration: 3000,
+                        gravity: 'bottom',
+                        position: 'center',
+                        backgroundColor: 'red',
+                    }).showToast();
+                } else {
+                    // Handle other error cases
+                }
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    });
+
+
+
+</script>
 <script>
     const searchInput = document.getElementById('table-search');
     const rows = document.querySelectorAll('[data-category]');
@@ -177,29 +233,6 @@
     }
 </script>
 
-<!-- <script>
-   function openEditCategoryModal(categoryName) {
-    // Set the category name in the modal input field (if needed)
-    document.getElementById('categoryName').value = categoryName;
-    
-    // Open the modal
-    document.getElementById('editCategoryModal').classList.remove('hidden');
-    document.getElementById('editCategoryModalBackdrop').classList.remove('hidden');
-    console.log("clicked1");
-}
 
-let f = function () {
-  document.getElementById('editCategoryModal').classList.add('hidden');
-  document.getElementById('editCategoryModalBackdrop').classList.add('hidden');
-  console.log('clicked2');
-}
-
-f();
-// JavaScript to close the modal
-document.getElementById('closeEditCategoryModalButton').addEventListener('click', f);
-
-
-
-</script> -->
 
 </html>

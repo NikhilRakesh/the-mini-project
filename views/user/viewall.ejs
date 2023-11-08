@@ -29,11 +29,12 @@
         <div class="w-1/4 p-4 bg-white rounded-lg shadow-md mr-4">
             <div class="flex flex-row mb-2">
                 <label for="priceFilter" class="text-gray-600 mr-2">Price:</label>
-                <select id="priceFilter" onchange="filterProducts()" class="border rounded-md py-1 px-2">
-                    <option value="default">Default</option>
-                    <option value="lowToHigh">Price: Low to High</option>
-                    <option value="highToLow">Price: High to Low</option>
-                </select>
+                <% console.log('sortOption',sortOption); %>
+                    <select id="priceFilter" onchange="filterProducts()" class="border rounded-md py-1 px-2">
+                        <option value="default">Default</option>
+                        <option value="lowToHigh">Price: Low to High</option>
+                        <option value="highToLow">Price: High to Low</option>
+                    </select>
             </div>
 
             <div class="flex flex-col space-y-2">
@@ -41,12 +42,14 @@
 
                 <!-- Internal Storage Dropdown -->
                 <div class="relative inline-block text-gray-700">
-                    <select id="internalStorageFilter"
+                    <select id="storageFilter" onchange="filterProducts(this)"
                         class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline">
                         <option value="all">Internal Storage</option>
-                        <option value="8gb">8GB</option>
-                        <option value="16gb">16GB</option>
-                        <!-- Add more internal storage options as needed -->
+                        <% trimmedStorage.forEach(function(option) { %>
+                            <option value="<%= option %>">
+                                <%= option.toUpperCase() %>
+                            </option>
+                            <% }); %>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -58,12 +61,14 @@
 
                 <!-- Camera Dropdown -->
                 <div class="relative inline-block text-gray-700">
-                    <select id="cameraFilter"
+                    <select id="cameraFilter" onchange="filterProducts(this)"
                         class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline">
                         <option value="all">Camera</option>
-                        <option value="8mp">8MP</option>
-                        <option value="12mp">12MP</option>
-                        <!-- Add more camera options as needed -->
+                        <% trimmedcamera.forEach(function(option) { %>
+                            <option value="<%= option %>">
+                                <%= option.toUpperCase() %>MP
+                            </option>
+                            <% }); %>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -75,13 +80,16 @@
 
                 <!-- Brands Dropdown -->
                 <div class="relative inline-block text-gray-700">
-                    <select id="brandFilter"
+                    <select id="brandFilter" onchange="filterProducts(this)"
                         class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline">
                         <option value="all">Brands</option>
-                        <option value="brand1">Brand 1</option>
-                        <option value="brand2">Brand 2</option>
-                        <!-- Add more brand options as needed -->
+                        <% trimmedUniqueBrands.forEach(function(brand) { %>
+                            <option value="<%= brand %>">
+                                <%= brand %>
+                            </option>
+                            <% }); %>
                     </select>
+
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                             <path
@@ -92,9 +100,9 @@
             </div>
 
         </div>
-
         <section class="">
-            <h1 class="text-3xl font-semibold mb-4 mt-5">Best of <%= products[0].category %>
+            <h1 id="bestof" data-bestof="<%= products[0].category %>" class="text-3xl font-semibold mb-4 mt-5">Best of
+                <%= products[0].category %>
             </h1>
 
             <div id="product-carousel"
@@ -108,12 +116,13 @@
                                 <img class="h-60 w-full rounded-t-lg object-cover" src="<%= product.imageUrl[3] %>"
                                     alt="<%= product.name %>" style="object-fit: cover; object-position: center;" />
                             </a>
-                            <a href="#" title="Add to Wishlist" id="wishlistIcon_<%= product.id %>" data-product-id="<%= product.id %>"
-                                class="absolute top-2 right-2">
+                            <a href="#" title="Add to Wishlist" id="wishlistIcon_<%= product.id %>"
+                                data-product-id="<%= product.id %>" class="absolute top-2 right-2">
                                 <div class="w-10 h-10 bg-white rounded-full flex justify-center items-center">
-                                    <img class="w-6" src="https://cdn-icons-png.flaticon.com/128/4032/4032576.png" alt="w">
+                                    <img class="w-6" src="https://cdn-icons-png.flaticon.com/128/4032/4032576.png"
+                                        alt="w">
                                 </div>
-                            </a>                            
+                            </a>
                             <div class="mt-4 px-5 pb-5">
                                 <a href="#">
                                     <h5 class="text-xl truncate-text font-semibold tracking-tight text-slate-900">
@@ -158,7 +167,7 @@
                                 <a href="/viewall?category=<%= products[0].category %>&page=<%= currentPage - 1 %>&perPage=<%= perPage %>"
                                     class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
                                 <% }else{ %>
-                                    <a href="#  "
+                                    <a href="#"
                                         class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
                                     <% } %>
                         </li>
@@ -185,7 +194,7 @@
                         <li>
                             <% if (currentPage < totalPages) { %>
                                 <a href="/viewall?category=<%= products[0].category %>&page=<%= currentPage + 1 %>&perPage=<%= perPage %>"
-                                    class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                                    class=" pagination-link flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
                                 <% } %>
                         </li>
                     </ul>
@@ -196,11 +205,15 @@
                         <% }); %>
                 </div>
             </div>
+            <input type="hidden" id="Hiddenn" name="fieldName" value="<%= sortOption %>">
         </section>
+        
 
-        <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        
+    </body>
+    
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-</body>
 
 <% if (user) { %>
     <script>
@@ -214,64 +227,94 @@
     <% } %>
 
         <script>
+
             function filterProducts() {
                 const selectedSort = document.getElementById("priceFilter").value;
-                const category = "<%= products[0].category %>";
-                window.location.href = `/viewall?category=${category}&sort=${selectedSort}`;
+                const selectedStorage = document.getElementById("storageFilter").value;
+                const selectedCamera = document.getElementById("cameraFilter").value;
+                const category = document.getElementById('bestof').getAttribute('data-bestof')
+                const selectedBrand = document.getElementById('brandFilter').value
+                const sortvalue = document.getElementById('Hiddenn').value
+                console.log('selectedSort', selectedSort);
+                localStorage.setItem('priceFilterValue', selectedSort);
+
+                let url = `/viewall?category=${category}&sort=${selectedSort}`;
+
+                if (selectedBrand !== 'all') {
+                    url += `&brand=${selectedBrand}`;
+                }
+
+                if (selectedStorage !== 'all') {
+                    url += `&storage=${selectedStorage}`;
+                }
+
+                if (selectedCamera !== 'all') {
+                    url += `&camera=${selectedCamera}`;
+                }
+
+                window.location.href = url;
             }
+            window.onload = function () {
+                const storedValue = localStorage.getItem('priceFilterValue');
+
+                if (storedValue) {
+                    console.log('window.onload',storedValue);
+                    document.getElementById("priceFilter").value = storedValue;
+                }
+            };
         </script>
 
-<script>
-   function addToWishlist(productId) {
-    fetch('/addwishlist', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productId: productId }),
-    })
-    .then((response) => {
-        if (response.status === 200) {
-                // Product was added to the wishlist
-                Toastify({
-                    text: 'Added to Wishlist!',
-                    duration: 3000, 
-                    gravity: 'bottom', 
-                    position: 'center', 
-                    backgroundColor: 'green',
-                }).showToast();
-            } else if (response.status === 409) {
-                // Product already exists in the wishlist
-                Toastify({
-                    text: 'Removed from Wishlist',
-                    duration: 3000, 
-                    gravity: 'bottom', 
-                    position: 'center', 
-                    backgroundColor: 'red',
-                }).showToast();
-            } else {
-                // Failed to add to wishlist
-                Toastify({
-                    text: 'Failed to add to Wishlist',
-                    duration: 3000,
-                    gravity: 'bottom', 
-                    position: 'center', 
-                    backgroundColor: 'rorange', 
-                }).showToast();
+        <script>
+            function addToWishlist(productId) {
+                fetch('/addwishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId: productId }),
+                })
+                    .then((response) => {
+                        if (response.status === 200) {
+                            // Product was added to the wishlist
+                            Toastify({
+                                text: 'Added to Wishlist!',
+                                duration: 3000,
+                                gravity: 'bottom',
+                                position: 'center',
+                                backgroundColor: 'green',
+                            }).showToast();
+                        } else if (response.status === 409) {
+                            // Product already exists in the wishlist
+                            Toastify({
+                                text: 'Removed from Wishlist',
+                                duration: 3000,
+                                gravity: 'bottom',
+                                position: 'center',
+                                backgroundColor: 'red',
+                            }).showToast();
+                        } else {
+                            // Failed to add to wishlist
+                            Toastify({
+                                text: 'Failed to add to Wishlist',
+                                duration: 3000,
+                                gravity: 'bottom',
+                                position: 'center',
+                                backgroundColor: 'rorange',
+                            }).showToast();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
             }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-}
 
-document.querySelectorAll('[id^="wishlistIcon_"]').forEach((element) => {
-    element.addEventListener('click', function () {
-        const productId = this.getAttribute('data-product-id');
-        addToWishlist(productId);
-    });
-});
+            document.querySelectorAll('[id^="wishlistIcon_"]').forEach((element) => {
+                element.addEventListener('click', function () {
+                    const productId = this.getAttribute('data-product-id');
+                    addToWishlist(productId);
+                });
+            });
 
-</script>
+        </script>
 
 </html>

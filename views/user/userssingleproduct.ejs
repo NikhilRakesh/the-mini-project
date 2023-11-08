@@ -88,7 +88,8 @@
                             <!-- Add to Cart Button -->
                             <% if (user) { %>
                                 <button>
-                                    <a href="#" onclick="addToCart('<%= user._id %>', '<%=  product._id %>', '<%= product.name %>')"
+                                    <a href="#"
+                                        onclick="addToCart('<%= user._id %>', '<%=  product._id %>', '<%= product.name %>')"
                                         class="flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -138,13 +139,13 @@
                                 <li>Product feature 1.</li>
                                 <li>Product feature 2.</li>
                                 <li>Product feature 1.</li>
-                                <li>Product feature 2.</li> 
+                                <li>Product feature 2.</li>
                                 <!-- Add more details as needed -->
                             </ul>
                         </div>
                         <hr class="mt-3 mb-3">
 
-                        <div class="flex items-center mb-2">
+                        <div class="flex items-center  mb-2">
                             <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
                                 <path
@@ -187,28 +188,28 @@
                             </div>
                             <span class="text-sm font-medium text-gray-500">17%</span>
                         </div>
-                        <div class ="flex items-center mt-4">
+                        <div class="flex items-center mt-4">
                             <a href="#" class="text-sm font-medium text-blue-600 hover:underline">3 star</a>
                             <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
                                 <div class="h-5 bg-yellow-300 rounded" style="width: 8%"></div>
                             </div>
                             <span class="text-sm font-medium text-gray-500">8%</span>
                         </div>
-                        <div class ="flex items-center mt-4">
+                        <div class="flex items-center mt-4">
                             <a href="#" class="text-sm font-medium text-blue-600 hover:underline">2 star</a>
                             <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
-                                <div class ="h-5 bg-yellow-300 rounded" style="width: 4%"></div>
+                                <div class="h-5 bg-yellow-300 rounded" style="width: 4%"></div>
                             </div>
                             <span class="text-sm font-medium text-gray-500">4%</span>
                         </div>
-                        <div class ="flex items-center mt-4">
+                        <div class="flex items-center mt-4">
                             <a href="#" class="text-sm font-medium text-blue-600 hover:underline">1 star</a>
                             <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded">
                                 <div class="h-5 bg-yellow-300 rounded" style="width: 1%"></div>
                             </div>
                             <span class="text-sm font-medium text-gray-500">1%</span>
                         </div>
-                        
+
 
                     </div>
 
@@ -226,8 +227,63 @@
             </div>
 
         </div>
+<div class="flex justify-center mb-7 " >
+    <h2 class="text-2xl font-semibold mb-4">Recommended Products</h2>
+</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 bg-gray-200">
+            <% for (const recommendedProduct of recommendedProducts) { %>
+                <div class="w-full p-4 relative">
+                    <div class="relative max-w-xs overflow-hidden rounded-lg bg-white shadow-md">
+                        <a href="<%= user ? 'userssingleproduct?id=' + recommendedProduct.id + '&userId=' + user.id : 'userssingleproduct?id=' + recommendedProduct.id %>">
+                            <img class="h-60 w-full rounded-t-lg object-cover" src="<%= recommendedProduct.imageUrl[3] %>"
+                                alt="<%= recommendedProduct.name %>" style="object-fit: cover; object-position: center;" />
+                        </a>
+                        <a href="#" title="Add to Wishlist" id="wishlistIcon_<%= recommendedProduct.id %>"
+                            data-product-id="<%= recommendedProduct.id %>" class="absolute top-2 right-2">
+                            <div class="w-10 h-10 bg-white rounded-full flex justify-center items-center">
+                                <img class="w-6" src="https://cdn-icons-png.flaticon.com/128/4032/4032576.png" alt="w">
+                            </div>
+                        </a>
+                        <div class="mt-4 px-5 pb-5">
+                            <a href="#">
+                                <h5 class="text-xl truncate-text font-semibold tracking-tight text-slate-900">
+                                    <%= recommendedProduct.name %>
+                                </h5>
+                            </a>
+                            <div class="mt-2.5 mb-5 flex items-center">
+                                <% if (recommendedProduct.count >= 1) { %>
+                                    <span class="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
+                                        <%= '5' %>
+                                    </span>
+                                <% } else { %>
+                                    <span class="mr-2 rounded bg-gray-500 px-2.5 py-0.5 text-xs text-white font-semibold">
+                                        Out of stock
+                                    </span>
+                                <% } %>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p>
+                                    <span class="text-3xl font-bold text-slate-900">
+                                        <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(recommendedProduct.price) %>
+                                    </span>
+                                    <!-- Add discount price if applicable -->
+                                    <% if (recommendedProduct.discountedPrice) { %>
+                                        <span class="text-sm text-slate-900 line-through">₹<%= recommendedProduct.discountedPrice %></span>
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+        
+        
 
     </body>
+    <footer class="mt-5">
+        <%- include('../partial/userfooter.ejs') %>
+    </footer>
 
     <script>
         window.onload = () => {
@@ -272,81 +328,81 @@
         }
     </script>
 
-<script>
-    function addToCart(userId, productId, productName) {
-      fetch(`/addtocart/${userId}/${productId}`,{
-      method: 'GET', // Set the request method to GET
-    })
-        .then((response) => {
-          if (response.ok) {
-            yourOnclickFunction() 
-          } else {
-            Toastify({
-              text: `Failed to add ${productName} to cart`,
-              duration: 3000,
-              gravity: 'bottom',
-              backgroundColor: 'red', 
-            }).showToast();
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    }
-  </script>
-
-            <script>
-                $("#mainImage").ezPlus();
-            </script>
-            <script src="/javascript/modal.js"></script>
-            <script src="/javascript/modal2.js"></script>
-            <script src="/javascript/modalotp.js"></script>
-            <script src="/javascript/banner.js"></script>
-            <script src="/javascript/otptimer.js"></script>
-            <script>
-                function openOTPVerificationModal() {
-                    const otpModal = document.getElementById('otp-verification-modal');
-                    otpModal.style.display = 'block';
-                }
-
-                function closeOTPVerificationModal() {
-                    const otpModal = document.getElementById('otp-verification-modal');
-                    otpModal.style.display = 'none';
-                }
-
-                function verifyOTP() {
-                    closeOTPVerificationModal();
-                }
-            </script>
-
-            <script>
-                // Get references to the main image and thumbnail images
-                var mainImage = document.getElementById("mainImage");
-                var thumbnailImages = document.querySelectorAll(".thumbnail");
-
-                // Add a click event listener to each thumbnail image
-                thumbnailImages.forEach((thumbnail, index) => {
-                    thumbnail.addEventListener("click", function () {
-
-                        count = index;
-
-                        // Update the src and data-zoom-image attributes of the main image
-                        mainImage.src = thumbnail.children[0].src.replace('http://localhost:7000/', '')
-                        console.log('here', mainImage.src);
-                        mainImage.removeAttribute("data-zoom-image")
-                        mainImage.setAttribute("data-zoom-image", thumbnail.children[0].src.replace('http://localhost:7000/', ''));
-                        console.log("Updated currentIndex:", count);
-                    });
+    <script>
+        function addToCart(userId, productId, productName) {
+            fetch(`/addtocart/${userId}/${productId}`, {
+                method: 'GET', // Set the request method to GET
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        yourOnclickFunction()
+                    } else {
+                        Toastify({
+                            text: `Failed to add ${productName} to cart`,
+                            duration: 3000,
+                            gravity: 'bottom',
+                            backgroundColor: 'red',
+                        }).showToast();
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
                 });
-            </script>
-            <% if (user) { %>
-                <script>
-                    // Set the global user variable with the user's _id
+        }
+    </script>
 
-                    var user = {
-                        _id: '<%= user._id %>'
-                    };
-                </script>
-                <% } %>
+    <script>
+        $("#mainImage").ezPlus();
+    </script>
+    <script src="/javascript/modal.js"></script>
+    <script src="/javascript/modal2.js"></script>
+    <script src="/javascript/modalotp.js"></script>
+    <script src="/javascript/banner.js"></script>
+    <script src="/javascript/otptimer.js"></script>
+    <script>
+        function openOTPVerificationModal() {
+            const otpModal = document.getElementById('otp-verification-modal');
+            otpModal.style.display = 'block';
+        }
+
+        function closeOTPVerificationModal() {
+            const otpModal = document.getElementById('otp-verification-modal');
+            otpModal.style.display = 'none';
+        }
+
+        function verifyOTP() {
+            closeOTPVerificationModal();
+        }
+    </script>
+
+    <script>
+        // Get references to the main image and thumbnail images
+        var mainImage = document.getElementById("mainImage");
+        var thumbnailImages = document.querySelectorAll(".thumbnail");
+
+        // Add a click event listener to each thumbnail image
+        thumbnailImages.forEach((thumbnail, index) => {
+            thumbnail.addEventListener("click", function () {
+
+                count = index;
+
+                // Update the src and data-zoom-image attributes of the main image
+                mainImage.src = thumbnail.children[0].src.replace('http://localhost:7000/', '')
+                console.log('here', mainImage.src);
+                mainImage.removeAttribute("data-zoom-image")
+                mainImage.setAttribute("data-zoom-image", thumbnail.children[0].src.replace('http://localhost:7000/', ''));
+                console.log("Updated currentIndex:", count);
+            });
+        });
+    </script>
+    <% if (user) { %>
+        <script>
+            // Set the global user variable with the user's _id
+
+            var user = {
+                _id: '<%= user._id %>'
+            };
+        </script>
+        <% } %>
 
 </html>

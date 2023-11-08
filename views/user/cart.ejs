@@ -44,39 +44,42 @@
                                 <p class="text-gray-700">
                                 <div class="flex justify-center w-1/5">
                                     <% if (cartItem.quantity==1) { %>
-                                        <button>
-                                            <svg class="fill-current  text-gray-600 w-3" viewBox="0 0 448 512">
-                                                <path
-                                                    d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-                                            </svg>
-                                        </button>
-                                        <% } else { %>
-                                            <button id="decrementButton" data-user-id="<%= user._id %>"
-                                                data-product-id="<%= cartItem.productId._id %>">
-
+                                        <% console.log('cart',cartItem.quantity); %>
+                                            <button id="mybutton">
                                                 <svg class="fill-current  text-gray-600 w-3" viewBox="0 0 448 512">
                                                     <path
                                                         d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
                                                 </svg>
-
                                             </button>
-                                            <% } %>
-                                                <input class="mx-2 border text-center  w-8 idclass" type="button"
-                                                    id="quantity_<%= cartItem.productId._id %>"
-                                                    value="<%= cartItem.quantity %>">
+                                            <% } else { %>
+                                                <% console.log('else',cartItem.quantity); %>
+                                                    <button id="decrementButton" data-user-id="<%= user._id %>"
+                                                        data-product-id="<%= cartItem.productId._id %>">
 
-                                                <button data-value="<%= cartItem.quantity %>" id="incrementButton"
-                                                    data-value="<%= cartItem.quantity %>">
-                                                    <a data-user-id="<%= user._id %>"
-                                                        data-product-id="<%= cartItem.productId._id %>"
-                                                        class="addToCartLink">
-                                                        <svg class="fill-current text-gray-600 w-3"
+                                                        <svg class="fill-current  text-gray-600 w-3"
                                                             viewBox="0 0 448 512">
                                                             <path
-                                                                d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
+                                                                d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
                                                         </svg>
-                                                    </a>
-                                                </button>
+
+                                                    </button>
+                                                    <% } %>
+                                                        <input class="mx-2 border text-center  w-8 idclass"
+                                                            type="button" id="quantity_<%= cartItem.productId._id %>"
+                                                            value="<%= cartItem.quantity %>">
+
+                                                        <button data-value="<%= cartItem.quantity %>"
+                                                            id="incrementButton" data-value="<%= cartItem.quantity %>">
+                                                            <a data-user-id="<%= user._id %>"
+                                                                data-product-id="<%= cartItem.productId._id %>"
+                                                                class="addToCartLink">
+                                                                <svg class="fill-current text-gray-600 w-3"
+                                                                    viewBox="0 0 448 512">
+                                                                    <path
+                                                                        d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
+                                                                </svg>
+                                                            </a>
+                                                        </button>
                                 </div>
                                 </p>
                             </div>
@@ -154,6 +157,8 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         const decrementButtons = document.querySelectorAll('#decrementButton');
+        const decrementButtons2 = document.querySelectorAll('#decrementButton');
+
 
         decrementButtons.forEach(function (button) {
             button.addEventListener('click', function (event) {
@@ -162,7 +167,7 @@
                 const userId = button.getAttribute('data-user-id');
                 const productId = button.getAttribute('data-product-id');
 
-                const parentLi = button.closest('li'); 
+                const parentLi = button.closest('li');
                 const priceElement = parentLi.querySelector('p[data-price]');
 
                 const inputElement = document.getElementById(`quantity_${productId}`);
@@ -199,7 +204,10 @@
 
 
 
-                const newValue = quantity - 1
+                let newValue = 1
+                if(quantity>1){
+                    newValue = quantity - 1
+                }
 
 
                 console.log(`it is ${newValue}`)
@@ -212,25 +220,29 @@
                     saveElement.textContent = `You will save ${formateddiscountAmount} on this order`;
                 }
 
-                fetch(`/decreaseQuantity/${userId}/${productId}`, { method: 'GET' })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        const contentType = response.headers.get('content-type');
-                        if (contentType && contentType.includes('application/json')) {
-                            return response.json();
-                        } else {
-                            // Handle non-JSON response, for example, you can return response text
-                            return response.text();
-                        }
-                    })
-                    .then(data => {
-                        // Handle the response data as needed
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
+                if(quantity>1){
+
+                    fetch(`/decreaseQuantity/${userId}/${productId}`, { method: 'GET' })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            const contentType = response.headers.get('content-type');
+                            if (contentType && contentType.includes('application/json')) {
+                                return response.json();
+                            } else {
+                                // Handle non-JSON response, for example, you can return response text
+                                return response.text();
+                            }
+                        })
+                        .then(data => {
+                            // Handle the response data as needed
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+
             });
         });
     });
@@ -302,7 +314,8 @@
                     saveElement.textContent = `You will save ${formateddiscountAmount} on this order`;
                 }
 
-                console.log('Quantity:', newValue);
+
+
 
                 fetch(`/addtocart/${userId}/${productId}`, { method: 'GET' })
                     .then(response => {

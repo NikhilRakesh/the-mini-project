@@ -55,7 +55,11 @@
                                             }).format(products.price) %>
                                     </td>
                                     <td class="p-3">
-                                        <span class="bg-green-400 text-gray-50 rounded-md px-2">available</span>
+                                        <% if(products.list){%>
+                                        <span class="bg-red-400 text-gray-50 rounded-md px-2">Unavailable</span>
+                                        <% }else{ %>
+                                            <span class="bg-green-400 text-gray-50 rounded-md px-2">available</span>
+                                            <% } %>
                                     </td>
                                     <td class="p-3 ">
                                         <% if(products.list){%>
@@ -76,8 +80,8 @@
                                                 </a>
                                                 <% } %>
                                     </td>
-                                    <td class="p-3">
-                                        <button id="count" data-modaltarget="<%= products._id %>" count="<%= products.count%>"
+                                    <td class="p-3 count ">
+                                        <button id="count" data-modaltarget="<%= products._id %>" data-count="<%= products.count%>"
                                             data-name="<%= products.name %>"
                                             class="toggleModalButton block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                             type="button">
@@ -204,7 +208,8 @@
     const Productid = document.getElementById('productid');
     const count = document.getElementById('count');
 
-
+    let Count;
+    const productCounts = {};
 
 
 
@@ -222,7 +227,8 @@
             productNameElement.innerText = ele.dataset.name;
             Productid.innerText = ele.dataset.modaltarget
 
-            const Count = count.getAttribute('count')
+             Count = ele.getAttribute('data-count')
+            console.log('count.getAttribute',Count);
             quantity.value = Count
 
             if (defaultModal.classList.contains('hidden')) {
@@ -240,12 +246,10 @@
         event.preventDefault();
         const productId = Productid.innerText
         const newQuantity = quantity.value
-
+        quantity.value = newQuantity
         console.log('productId', productId);
         console.log('quantity innnertext',quantity.value);
-
-        count.setAttribute('count',newQuantity);
-
+        count.setAttribute('data-count', newQuantity);
 
         fetch(`/count?productId=${productId}&newQuantity=${newQuantity}`, {
             method: 'get',

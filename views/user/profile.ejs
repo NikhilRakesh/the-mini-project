@@ -33,7 +33,14 @@
                 <li><a href="/myOrder">Orders Status</a></li>
 
             </ul>
+            <hr class="dark:border-gray-400 mt-2 ">
+            <h2 class="text-lg font-semibold mb-2 mt-2">Wallet</h2>
+            <hr class="dark:border-gray-400">
+            <ul class="mt-2">
+                <li><a href="/wallet">Manage wallet</a></li>
 
+            </ul>
+            <hr class="dark:border-gray-400 mt-2 ">
         </div>
 
         <!-- Profile Details Section -->
@@ -163,84 +170,85 @@
 
     </div>
 
-        <div id="address-modal" tabindex="-1" aria-hidden="true"
-            class="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center hidden">
-            <div class="fixed inset-0 bg-black opacity-50"></div>
+    <div id="address-modal" tabindex="-1" aria-hidden="true"
+        class="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center hidden">
+        <div class="fixed inset-0 bg-black opacity-50"></div>
 
-            <div class="relative w-full max-w-md max-h-full">
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <button type="button"
-                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        data-modal-hide="address-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
+        <div class="relative w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <button type="button"
+                    class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-hide="address-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
 
-                    <div class="px-6 py-6 lg:px-8">
-                        <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+                <div class="px-6 py-6 lg:px-8">
+                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+                        Add Address
+                    </h3>
+
+                    <form id="address-form" class="space-y-6" action="/addAdress" method="post">
+                        <div>
+                            <label for="street" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Street:
+                            </label>
+                            <input type="text" name="street" id="street"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="Street Address" required />
+                        </div>
+                        <div>
+                            <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                City:
+                            </label>
+                            <input type="text" name="city" id="city"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="City" required />
+                        </div>
+                        <div>
+                            <label for="state" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                State:
+                            </label>
+                            <input type="text" name="state" id="state"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="State" required />
+                        </div>
+                        <div>
+                            <label for="postalCode"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Postal Code:
+                            </label>
+                            <input type="text" name="postalCode" id="postalCode"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="Postal Code" required />
+                        </div>
+                        <div>
+                            <label for="country" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Country:
+                            </label>
+                            <input type="text" name="country" id="country"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="Country" required />
+                        </div>
+
+                        <button type="submit"
+                            class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Add Address
-                        </h3>
-
-                        <form id="address-form" class="space-y-6" action="/addAdress" method="post">
-                            <div>
-                                <label for="street"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Street:
-                                </label>
-                                <input type="text" name="street" id="street"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="Street Address" required />
-                            </div>
-                            <div>
-                                <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    City:
-                                </label>
-                                <input type="text" name="city" id="city"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="City" required />
-                            </div>
-                            <div>
-                                <label for="state" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    State:
-                                </label>
-                                <input type="text" name="state" id="state"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="State" required />
-                            </div>
-                            <div>
-                                <label for="postalCode"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Postal Code:
-                                </label>
-                                <input type="text" name="postalCode" id="postalCode"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="Postal Code" required />
-                            </div>
-                            <div>
-                                <label for="country"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Country:
-                                </label>
-                                <input type="text" name="country" id="country"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="Country" required />
-                            </div>
-
-                            <button type="submit"
-                                class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                Add Address
-                            </button>
-                        </form>
-                    </div>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
 </body>
+<footer class="mt-5">
+    <%- include('../partial/userfooter.ejs') %>
+</footer>   
 <script>
     function editInfo(fieldName) {
         // Hide the displayed text and show the input field for the specified field
@@ -253,32 +261,32 @@
 
 <script>
     const addressButtons = document.querySelectorAll(".address-button");
-addressButtons.forEach((button) => {
-  button.addEventListener("click", function () {
-    const addressId = button.getAttribute("data-address-id");
+    addressButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const addressId = button.getAttribute("data-address-id");
 
-    // Define the data you want to send in the POST request
-    const data = { addressId };
+            // Define the data you want to send in the POST request
+            const data = { addressId };
 
-    fetch('/primary', {
-      method: 'POST',
-      headers: {   
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-      if (response.ok) {
-        // Handle a successful response here
-      } else {
-        // Handle errors here
-      }
-    })
-    .catch((error) => {
-      // Handle network errors here
+            fetch('/primary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        // Handle a successful response here
+                    } else {
+                        // Handle errors here
+                    }
+                })
+                .catch((error) => {
+                    // Handle network errors here
+                });
+        });
     });
-  });
-});
 
 
 </script>

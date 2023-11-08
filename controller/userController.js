@@ -6,83 +6,63 @@ const uuid = require('uuid');
 
 
 const fs = require('fs');
-const easyinvoice = require('easyinvoice');
+const PDFDocument = require('pdfkit');
 
-const generateInvoice = async (order, newOrder) => {
-    console.log('order', order);
+const generateInvoiceWithPdfKit = (order, newOrder) => {
+    console.log('order.amount', order.amount);
 
-    const productsData = newOrder.products.map((product) => ({
-        quantity: product.quantity,
-        description: product.productName,
-        tax: 18,
-        price: (product.quantity * product.price).toFixed(2), // Calculate the total price for the product
-    }));
-
+    console.log('generateInvoiceWithPdfKit');
+    const doc = new PDFDocument();
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split('T')[0];
 
-    const data = {
-        document: {
-            currency: 'INR',
-            taxNotation: 'gst',
-            marginTop: 25,
-            marginRight: 25,
-            marginLeft: 25,
-            marginBottom: 25,
-            // logo: 'path-to-your-logo.png', // Replace with your company logo path
-            // background: 'path-to-your-background.png', // Replace with your background image path
-        },
-        sender: {
-            company: 'LuxLifeHub',
-            address: '123 Main St, City, Country',
-            zip: '12345',
-            city: 'City',
-            country: 'India',
-        },
-        client: {
-            company: newOrder.customerName,
-            address: `${newOrder.shippingAddress.street}, ${newOrder.shippingAddress.city}, ${newOrder.shippingAddress.country}`,
-            zip: newOrder.shippingAddress.postalCode,
-            city: newOrder.shippingAddress.city,
-            country: newOrder.shippingAddress.country,
-        },
-        invoice: {
-            number: `INV-${order.id}`,
-            date: formattedDate,
-            dueDate: '2023-11-25',
-        },
-        products: productsData,
-    };
+    const outputFilename = `invoice_${order.id}.pdf`;
+    const outputFilePath = `./public/invoices/${outputFilename}`;
+    const writeStream = fs.createWriteStream(outputFilePath);
+    doc.pipe(writeStream);
 
+    doc.info.Title = `Invoice ${order.id}`;
+    doc.info.Author = 'LuxLifeHub';
 
-    const result = await easyinvoice.createInvoice(data);
+    const logoPath = 'public/uploads/LUXLIFEHUB.png';
+    doc.image(logoPath, 100, -30, { width: 150 });
 
-    const path = require('path');
-    const baseDirectory = path.dirname(require.main.filename);
-    const folderPath = path.join(baseDirectory, 'public', 'invoices');
-    console.log('folderPath', folderPath);
-    const fileName = `invoice_${order.id}.pdf`;
-    const filePath = path.join(folderPath, fileName);
+    doc.fontSize(20).text('Invoice', { align: 'center' }).moveDown(0.5);
+    doc.fontSize(12).text(`Invoice Number: INV-${order.id}`).moveDown(0.5);
+    doc.fontSize(12).text(`Invoice Date: ${formattedDate}`).moveDown(0.5);
+    doc.fontSize(12).text(`Customer: ${newOrder.customerName}`).moveDown(1);
 
-    console.log('filePath', filePath);
+    doc.font('Helvetica-Bold');
+    doc.text('Description', 100, 200, { width: 200 });
+    doc.text('Quantity', 300, 200, { width: 50 });
+    doc.text('Unit Price', 350, 200, { width: 100 });
+    doc.text('Amount', 450, 200, { width: 100 });
 
-    if (!fs.existsSync(folderPath)) {
-        console.log('here');
-        fs.mkdirSync(folderPath, { recursive: true });
-    }
+    const productsData = newOrder.products;
+    let y = 240;
 
-    const pdfBuffer = Buffer.from(result.pdf, 'base64');
+    doc.font('Helvetica');
+    productsData.forEach((product) => {
+        doc.text(product.productName, 100, y, { width: 200 });
+        doc.text(product.quantity.toString(), 300, y, { width: 50 });
+        doc.text(product.price.toFixed(2), 350, y, { width: 100 });
+        doc.text((product.quantity * product.price).toFixed(2), 450, y, { width: 100 });
+        y += 20;
+    });
 
-    console.log('pdfBuffer', pdfBuffer);
+    doc.moveTo(100, y).lineTo(550, y).stroke();
 
-    try {
-        await fs.writeFileSync(filePath, pdfBuffer);
-        console.log('PDF saved successfully.');
-    } catch (error) {
-        console.error('Error saving PDF:', error);
-    }
+    const totalAmount = productsData.reduce(
+        (total, product) => total + product.quantity * product.price,
+        0
+    );
 
-    return fileName;
+    doc.fontSize(14).text(`Total: ₹${order.amount.toFixed(2)}`, 350, y + 10, { width: 100 });
+
+    doc.end();
+
+    console.log(`Invoice saved as ${outputFilename}`);
+    return outputFilename;
 };
 
 
@@ -325,13 +305,21 @@ const userssingleproduct = async (req, res) => {
         }
 
         const product = await productSchema.findById(productId);
+        const recommendedProducts = await productSchema.find({ brand: product.brand })
+        console.log('recomentation', recommendedProducts);
+        if (!recommendedProducts) {
+            return res.status(404).json({ error: 'recomentation not found' });
+        }
 
         if (!product) {
             return res.status(404).json({ error: 'Product not found' });
         }
 
         let count = 3
-        res.render('user/userssingleproduct', { product, user, count })
+        res.render('user/userssingleproduct', {
+            product, user, count,
+            recommendedProducts,
+        })
 
     } catch (error) {
         console.error('Error finding product:', error);
@@ -350,7 +338,33 @@ const viewall = async (req, res) => {
         const category = req.query.category;
         const page = parseInt(req.query.page) || 1;
         const perPage = parseInt(req.query.perPage) || 9;
-        const sortOption = req.query.sort
+        let sortOption = req.query.sort
+        const selectedBrand = req.query.brand
+        const selectedCamera = req.query.camera;
+        const selectedStorage = req.query.storage;
+        console.log('sortOptionssss', sortOption);
+        if(sortOption){
+            req.session.sortoption = sortOption
+        }
+        if(!sortOption){
+            sortOption = req.session.sortoption
+            console.log('req.session.sortoption', sortOption);
+
+        }
+
+        let query = { list: false, category: category };
+
+        if (selectedBrand && selectedBrand !== 'all') {
+            query = { list: false, category: category, brand: selectedBrand }
+        }
+
+        if (selectedCamera && selectedCamera !== 'all') {
+            query.camera = selectedCamera;
+        }
+
+        if (selectedStorage && selectedStorage !== 'all') {
+            query.storage = selectedStorage;
+        }
 
         let user = null;
 
@@ -358,41 +372,51 @@ const viewall = async (req, res) => {
             const userId = req.session.user._id;
             user = await signupSchema.findById(userId);
         }
+        const uniqueBrands = await productSchema.distinct('brand', { list: false, category: category });
+        const trimmedUniqueBrands = uniqueBrands.map(brand => brand.trim());
+
+        const camera = await productSchema.distinct('camera', { list: false, category: category });
+        const trimmedcamera = camera.map(brand => brand.trim());
+
+        const storage = await productSchema.distinct('storage', { list: false, category: category });
+        const trimmedStorage = storage.map(brand => brand.trim());
 
         let products;
         let totalProductsCount;
 
         if (sortOption === 'lowToHigh') {
-            products = await productSchema.find({ list: false, category: category })
+            console.log('1');
+            products = await productSchema.find(query)
                 .sort({ price: 1 })
                 .skip((page - 1) * perPage)
                 .limit(perPage);
 
-            totalProductsCount = await productSchema.countDocuments({ category: category });
+            totalProductsCount = await productSchema.countDocuments(query);
         } else if (sortOption === 'highToLow') {
-            products = await productSchema.find({ list: false, category: category })
+            console.log('2');
+            products = await productSchema.find(query)
                 .sort({ price: -1 })
                 .skip((page - 1) * perPage)
                 .limit(perPage);
 
-            totalProductsCount = await productSchema.countDocuments({ category: category });
+            totalProductsCount = await productSchema.countDocuments(query);
         } else {
-            products = await productSchema.find({ list: false, category: category })
+            console.log('3');
+            products = await productSchema.find(query)
                 .skip((page - 1) * perPage)
                 .limit(perPage);
 
-            totalProductsCount = await productSchema.countDocuments({ category: category });
+            totalProductsCount = await productSchema.countDocuments(query);
         }
-        console.log('current page', page);
-
-        console.log('totalPages ', Math.ceil(totalProductsCount / perPage));
 
         res.render('user/viewall', {
             products,
             user,
             currentPage: page,
             totalPages: Math.ceil(totalProductsCount / perPage),
-            perPage
+            perPage,
+            trimmedUniqueBrands, trimmedcamera, trimmedStorage,
+            sortOption,
         });
     } catch (error) {
         console.error('Error viewall:', error);
@@ -873,7 +897,7 @@ const checkout = async (req, res) => {
             .findById(userId)
             .populate({
                 path: 'shoppingCart.items.productId',
-                model: 'Product', // Replace with your product model name
+                model: 'Product',
             });
 
         if (!user) {
@@ -883,7 +907,7 @@ const checkout = async (req, res) => {
 
         let totalPrice = 0;
         user.shoppingCart.items.forEach((cartItem) => {
-            totalPrice += cartItem.productId.price * cartItem.quantity; // Multiply by quantity
+            totalPrice += cartItem.productId.price * cartItem.quantity;
         });
 
         const discountPercentage = 12; // 10% discount
@@ -946,6 +970,44 @@ const primary = async (req, res) => {
     }
 }
 
+const buyNowConfirorder = async (req, res) => {
+    try {
+        const userId = req.session.user._id;
+        const formattedAmount = req.query.formattedAmount;
+        const productid = req.query.productid;
+        const numericValue = parseFloat(formattedAmount.replace(/[^0-9.]/g, ''));
+
+        const user = await signupSchema.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const product = await productSchema.findById(productid);
+        console.log('product', product);
+
+        const newOrder = new orderSchema({
+            user: user._id,
+            customerName: user.username,
+            orderDate: new Date(),
+            products: {
+                productName: product.name,
+                quantity: 1,
+                price: product.price,  
+                imageUrl: product.imageUrl
+            },
+            totalPrice: numericValue,
+            shippingAddress: user.address.find((address) => address.primary),
+        });
+        const remainingCount = product.count - 1;
+        await productSchema.findByIdAndUpdate(productid, { count: remainingCount });
+        await newOrder.save();
+        res.redirect('/ordersuccessfulpage')
+
+    } catch (error) {
+        console.error('Error in buyNowConfirorder:', error);
+        res.redirect('back')
+    }
+}
 
 // assagining data to order schema after place the order
 const confirmOrder = async (req, res) => {
@@ -956,6 +1018,9 @@ const confirmOrder = async (req, res) => {
         }
 
         const userId = req.session.user._id;
+        const formattedAmount = req.query.formattedAmount;
+        console.log('formattedAmount', formattedAmount);
+        const numericValue = parseFloat(formattedAmount.replace(/[^0-9.]/g, ''));
 
         const user = await signupSchema.findById(userId);
 
@@ -970,6 +1035,8 @@ const confirmOrder = async (req, res) => {
             });
 
             const productImages = populatedCartItem.productId.imageUrl
+            const remainingCount = populatedCartItem.productId.count - cartItem.quantity;
+            await productSchema.findByIdAndUpdate(populatedCartItem.productId._id, { count: remainingCount });
 
             return {
                 product: populatedCartItem.productId,
@@ -992,7 +1059,7 @@ const confirmOrder = async (req, res) => {
                 price: cartItem.product.price,
                 imageUrl: cartItem.images
             })),
-            totalPrice: totalPrice,
+            totalPrice: numericValue,
             shippingAddress: user.address.find((address) => address.primary),
         });
 
@@ -1143,12 +1210,12 @@ const createOrder = async (req, res) => {
         let { amount, productid } = req.body;
         amount = amount.replace(/[^0-9.]/g, '');
         const integerValue = parseInt(amount, 10);
-
         const userId = req.session.user._id;
         const user = await signupSchema.findById(userId);
 
 
         const Amount = integerValue * 100
+
         let newOrder = null
         if (productid === null) {
 
@@ -1187,9 +1254,11 @@ const createOrder = async (req, res) => {
                     price: cartItem.product.price,
                     imageUrl: cartItem.images
                 })),
-                totalPrice: totalPrice,
+                totalPrice: integerValue,
                 shippingAddress: user.address.find((address) => address.primary),
             });
+            await newOrder.save();
+
         } else {
 
             const product = await productSchema.findById(productid);
@@ -1206,7 +1275,7 @@ const createOrder = async (req, res) => {
                         imageUrl: product.imageUrl,
                     },
                 ],
-                totalPrice: product.price,
+                totalPrice: integerValue,
                 shippingAddress: user.address.find((address) => address.primary),
             });
 
@@ -1214,19 +1283,18 @@ const createOrder = async (req, res) => {
 
         }
 
-
-
         razorpay.orders.create({
             amount: Amount,
             currency: currency
         }, async (error, order) => {
+
             if (error) {
                 console.error(error);
                 res.status(500).json({ error: 'Internal server error' });
             } else {
                 try {
-                    console.log('newOrder', newOrder);
-                    const pdfLink = await generateInvoice(order, newOrder);
+                    console.log('newOrder', order);
+                    const pdfLink = await generateInvoiceWithPdfKit(order, newOrder);
                     req.session.invoiceId = pdfLink
                     res.json({ order, pdfLink });
                 } catch (invoiceError) {
@@ -1264,7 +1332,7 @@ const cashondelivery = async (req, res) => {
         const user = await signupSchema.findById(userId);
 
         const generateUniqueID = () => {
-            return uuid.v4(); 
+            return uuid.v4();
         };
 
         const uniqueOrderID = generateUniqueID();
@@ -1272,7 +1340,7 @@ const cashondelivery = async (req, res) => {
 
         const order = {
             id: uniqueOrderID,
-            amount: amount,
+            amount: parseFloat(amount.replace(/[^0-9.]/g, '')),
             currency: "INR"
         }
 
@@ -1342,7 +1410,7 @@ const cashondelivery = async (req, res) => {
         }
 
 
-        const pdfLink = await generateInvoice(order, newOrder);
+        const pdfLink = await generateInvoiceWithPdfKit(order, newOrder);
         console.log(' req.session.invoiceId:', pdfLink);
         req.session.invoiceId = pdfLink
 
@@ -1371,5 +1439,5 @@ module.exports = {
     updateProfile, addAdress, editAdress, updateadress,
     deleteAdress, checkout, primary, confirmOrder, myOrder,
     falser, buyNow, buyNoworder, wishlist, createOrder,
-    ordersuccessfulpage, cashondelivery,
+    ordersuccessfulpage, cashondelivery, buyNowConfirorder,
 }

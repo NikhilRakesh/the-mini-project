@@ -2,6 +2,8 @@ const productSchema = require('../modal/productSchema')
 const categorySchema = require('../modal/categorySchema')
 const signupSchema = require('../modal/signupSchema')
 const orderSchema = require('../modal/orderSchema')
+const walletSchema = require('../modal/walletSchema')
+
 
 const path = require('path')
 
@@ -19,7 +21,7 @@ const adminproducts = async (req, res) => {
 
     // Retrieve a slice of products based on pagination
     const products = await productSchema
-        .find({list: false})
+        .find({ list: false })
         .skip(skip)
         .limit(productsPerPage);
 
@@ -35,7 +37,7 @@ const adminproducts = async (req, res) => {
 // adding products
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, category, color, rating } = req.body;
+        const { name, description, price, category, color, Storage, Ram, Camera, Brand } = req.body;
         console.log('category', category);
 
 
@@ -63,6 +65,10 @@ const addProduct = async (req, res) => {
             category,
             color,
             imageUrl: imagePaths,
+            Ram: Ram,
+            camera: Camera,
+            brand: Brand,
+            storage: Storage,
         });
 
         await newProduct.save();
@@ -79,27 +85,35 @@ const addProduct = async (req, res) => {
 const addCategory = async (req, res) => {
 
     try {
+        console.log('req.body', req.body.name);
 
-        const { name } = req.body
+        const { name } = req.body;
+        console.log('name', name);
 
-        const existingCategory = await categorySchema.findOne({ name });
 
-        if (existingCategory) {
-            // Category already exists, send an error message
-            console.log('Category already exists');
-            return res.redirect('back')
-        }
-
-        const newCategory = new categorySchema({
-            name: name,
+        const existingCategory = await categorySchema.findOne({
+            name: { $regex: new RegExp('^' + name + '$', 'i') }
         });
 
-        await newCategory.save();
-        res.redirect('/adminCatageory')
+        if (existingCategory) {
+            console.log('Category already exists');
+            return res.status(500).json({ error: 'Category already exists' });
+        } else {
+
+            const newCategory = new categorySchema({
+                name: name,
+            });
+
+            await newCategory.save();
+            return res.status(200).json({ success: true, message: 'Category created successfully' })
+        }
+
+
+        // res.redirect('/adminCatageory')
     }
     catch (error) {
-
         console.error('Error creating category:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 
 }
@@ -122,20 +136,23 @@ const productedit = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const productId = req.params.productId;
-        // Find the product by ID
         const product = await productSchema.findById(productId);
 
         if (!product) {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        // Update product details based on the request body
         product.name = req.body.Productname;
         product.category = req.body.category;
         product.price = req.body.price;
         product.color = req.body.color;
+        product.description = req.body.description;
+        product.Ram = req.body.Ram;
+        product.brand = req.body.brand;
+        product.camera = req.body.camera;
+        product.storage = req.body.storage;
 
-        // Save the updated product
+
         await product.save();
 
 
@@ -152,7 +169,6 @@ const productdelete = async (req, res) => {
 
     try {
         const productId = req.query.id
-        // find the user with userid and delete from database
         const deleteproduct = await productSchema.findByIdAndRemove(productId);
 
         if (!deleteproduct) {
@@ -234,7 +250,7 @@ const stockPage = async (req, res) => {
 const listProduct = async (req, res) => {
     try {
         const productId = req.query.productId
-console.log('list product');
+        console.log('list product');
         const product = await productSchema.findById(productId);
 
         if (!product) {
@@ -275,44 +291,91 @@ const unlistproduct = async (req, res) => {
 
 
 
-const count = async (req,res) => {
-    try{
+const count = async (req, res) => {
+    try {
         const productId = req.query.productId
         const count = req.query.newQuantity
+        console.log('count', count);
         const product = await productSchema.findById(productId);
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
+        console.log('product.count', product.count);
         product.count = count
-         await product.save()
+        await product.save()
 
-         return res.status(200).json({ success: true, message: 'Product count updated' });
+        return res.status(200).json({ success: true, message: 'Product count updated' });
 
-    }catch (error) {
+    } catch (error) {
         console.error('Error updating product count:', error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
 
 
-const cancelOrder = async (req,res) => {
-    try{
+const cancelOrder = async (req, res) => {
+    try {
+        console.log('cancel order ');
         const orderId = req.query.orderId
         const status = req.query.status
-        console.log('orderid',orderId);
         const order = await orderSchema.findById(orderId)
-        order.status = status
-        await order.save()
+        console.log('status',status,'order', order);
+        if (status == 'Canceled'||status == 'Order return') {
+            for (const product of order.products) {
+                const productname = product.productName;
+               
+                const updatedProduct = await productSchema.findOne({ name: productname });
+                if (updatedProduct) {
+                    console.log('product:', product);
+                    console.log('Updated product:', updatedProduct);
+                    const quantity = product.quantity;
+                    updatedProduct.count += quantity;
+                    await updatedProduct.save();
+                } else {
+                    console.log('Product not found for name:', productname);
+                }
+            }
+            const refundAmount = order.totalPrice;
+            const userId = order.user;
+            const user = await signupSchema.findById(userId);
+            const wallet = await walletSchema.findOne({ userId: userId });
+
+            if (!wallet) {
+                const newWallet = await walletSchema.create({ userId });
+                user.wallet = newWallet;
+                await user.save();
+
+                newWallet.balance += refundAmount;
+                newWallet.transactions.push({
+                    type: 'credit',
+                    amount: refundAmount,
+                });
+                await newWallet.save();
+            } else {
+                wallet.transactions.push({
+                    type: 'credit',
+                    amount: refundAmount,
+                });
+                wallet.balance += refundAmount;
+                await wallet.save();
+            }
+        }
+
+            order.status = status;
+            await order.save();
+        
+        
         res.redirect('back')
-    }catch (error) {
+    } catch (error) {
+        console.log('catchhhhh');
         console.error('Error updating cancelOrder:', error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
 
 // addwishlist
-const addwishlist = async (req,res) => {
-    try{
+const addwishlist = async (req, res) => {
+    try {
 
         const { productId } = req.body;
 
@@ -335,8 +398,8 @@ const addwishlist = async (req,res) => {
                 userId,
                 { $pull: { wishlist: { productId: productId } } },
                 { new: true }
-              );
-              await user.save();
+            );
+            await user.save();
             return res.status(409).json({ success: false, message: 'Product already in wishlist' });
         }
 
@@ -346,7 +409,7 @@ const addwishlist = async (req,res) => {
 
         return res.status(200).json({ success: true, message: 'Product added to wishlist' });
 
-    }catch (error) {
+    } catch (error) {
         console.error('Error updating addwishlist:', error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
@@ -356,26 +419,26 @@ const addwishlist = async (req,res) => {
 //  deleteFromWishlist
 const deleteFromWishlist = async (req, res) => {
     try {
-      const userId = req.session.user._id; 
-      const productId = req.params.productId; 
-  
-      const user = await signupSchema.findByIdAndUpdate(
-        userId,
-        { $pull: { wishlist: { productId: productId } } },
-        { new: true }
-      );
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.status(200).json({ message: 'Product removed from wishlist' });
+        const userId = req.session.user._id;
+        const productId = req.params.productId;
+
+        const user = await signupSchema.findByIdAndUpdate(
+            userId,
+            { $pull: { wishlist: { productId: productId } } },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'Product removed from wishlist' });
     } catch (error) {
-      console.error('Error in deleteFromWishlist:', error);
-      res.status(500).json({ message: 'Internal server error' });
+        console.error('Error in deleteFromWishlist:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-  };
-  
+};
+
 
 
 
@@ -388,5 +451,5 @@ module.exports = {
     updateProduct, productdelete,
     deleteProductCart, productImageEdit,
     stockPage, listProduct, unlistproduct,
-    count,cancelOrder,addwishlist,deleteFromWishlist,
+    count, cancelOrder, addwishlist, deleteFromWishlist,
 }

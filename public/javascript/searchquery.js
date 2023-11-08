@@ -13,4 +13,4 @@ function searchWithQuery() {
     window.location.href = url;
 }
 
-log
+

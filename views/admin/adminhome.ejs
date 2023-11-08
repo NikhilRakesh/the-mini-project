@@ -8,18 +8,17 @@
     <title>admindashbord</title>
 </head>
 <style>
-   
-   body::-webkit-scrollbar {
-    width: 0.4em;
-  }
+    body::-webkit-scrollbar {
+        width: 0.4em;
+    }
 
-  body::-webkit-scrollbar-track {
-    background: transparent;
-  }
+    body::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-  body::-webkit-scrollbar-thumb {
-    background-color: transparent;
-  } 
+    body::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
 </style>
 
 <header>
@@ -41,7 +40,7 @@
                 <canvas id="ordersChart" data-ordersdata='<%= JSON.stringify(ordersData) %>'></canvas>
             </div>
         </div>
-    
+
         <!-- Total Earning Statistics -->
         <div class="w-full md:w-1/2 lg:w-1/3 p-4">
             <div class="bg-gray-800 rounded-lg shadow p-4">
@@ -52,53 +51,123 @@
                     <div class="mb-6">
                         <p class="text-lg font-semibold text-indigo-600">Monthly</p>
                         <p class="text-3xl font-bold text-indigo-600">
-                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR' }).format(monthlyEarnings) %>
+                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                }).format(monthlyEarnings) %>
                         </p>
                         <p class="text-gray-500">This month</p>
                     </div>
                     <div>
                         <p class="text-lg font-semibold text-indigo-600">Yearly</p>
                         <p class="text-3xl font-bold text-indigo-600">
-                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR' }).format(yearlyEarnings) %>
+                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                }).format(yearlyEarnings) %>
                         </p>
                         <p class="text-gray-500">This year</p>
                     </div>
                 </div>
             </div>
         </div>
-        
-        
- 
+
+
+
         <!-- hit rate Chart -->
         <div class="w-full md:w-1/2 lg:w-1/3 p-4">
             <div class="bg-gray-800 rounded-lg shadow p-4">
-                <canvas id="hitRateChart" data-hitratedata="<%= JSON.stringify(hitRateData) %>" ></canvas>
+                <canvas id="hitRateChart" data-hitratedata="<%= JSON.stringify(hitRateData) %>"></canvas>
             </div>
         </div>
     </div>
-    
+<div class="flex justify-between">
+
+    <div class="text-center">
+        <button id="downloadMonthlyExcelReport" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
+            Download Excel Report
+        </button>
+    </div>
+    <div class="text-center">
+        <button id="downloadReportButton"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Download Sales Report</button>
+    </div>
+</div>
 </section>
+
 
 <script src="/javascript/banner.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+    const downloadReportButton = document.getElementById('downloadReportButton');
+    downloadReportButton.addEventListener('click', () => {
+        fetch('/generateSalesReport', {
+            method: 'GET',
+        })
+            .then(response => {
+
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error("Network response was not ok");
+                }
+            })
+            .then(reportFilename => {
+
+                const reportInfo = JSON.parse(reportFilename);
+                const filename = reportInfo.filename;
+                console.log('filename', filename);
+                 const downloadLink = document.createElement('a');
+                downloadLink.href = `/downloadSalesReport/${filename}`;
+                downloadLink.download = filename;
+                console.log(' downloadLink.href',downloadLink.download);
+                downloadLink.style.display = 'none';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+<script>
+    document.getElementById('downloadMonthlyExcelReport').addEventListener('click', () => {
+        fetch('/generateExcelReport', {
+            method: 'GET',
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'monthly_sales_report.xlsx'; 
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Error downloading Monthly Excel report:', error);
+        });
+    });
+</script>
+
+
+<script>
     // Revenue Chart
     var revenueCtx = document.getElementById('revenueChart').getContext('2d');
-var revenueDataString = document.getElementById('revenueChart').getAttribute('data-revenuedata');
-var revenueData = JSON.parse(revenueDataString);
+    var revenueDataString = document.getElementById('revenueChart').getAttribute('data-revenuedata');
+    var revenueData = JSON.parse(revenueDataString);
 
-var revenueChart = new Chart(revenueCtx, {
-    type: 'line',
-    data: revenueData, 
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+    var revenueChart = new Chart(revenueCtx, {
+        type: 'line',
+        data: revenueData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-    }
-});
+    });
 
     // Weekly Orders Chart
     var ordersDataString = document.getElementById('ordersChart').getAttribute('data-ordersdata');

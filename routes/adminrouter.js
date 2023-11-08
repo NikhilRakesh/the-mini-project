@@ -19,6 +19,9 @@ router.get('/catageoryedit/:catageoryId',adminSessionMiddleware,admincontroller.
 router.post('/updatecatageory/:catageoryId',admincontroller.updatecatageory) 
 router.get('/deleteCatageory/:catageoryId',admincontroller.deleteCatageory) 
 router.get('/orders',adminSessionMiddleware,admincontroller.orders) 
+router.get('/generateSalesReport',adminSessionMiddleware,admincontroller.generateSalesReport)
+router.get('/downloadSalesReport/:filename',adminSessionMiddleware,admincontroller.downloadSalesreport)
+router.get('/generateExcelReport',adminSessionMiddleware,admincontroller.generateExcelSalesReport)
 
 
 

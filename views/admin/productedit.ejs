@@ -25,12 +25,18 @@
                         class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         <!-- Add dropdown options here -->
                         <% categories.forEach(function(category) { %>
-                            <option value=<%= category.name %>><%= category.name %></option>
+                            <option value="<%= category.name %>" <%= product.category === category.name ? 'selected' : '' %>
+                                ><%= category.name %></option>
                         <% }); %>
                         <!-- Add more categories as needed -->
                     </select>
                         <!-- <input type="Category" name="category" value="<%= product.category %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required> -->
                     </div>
+                    <div class="mb-4" >
+                        <label for="product-description" class="block mb-2 text-sm font-medium text-white-900">Description</label>
+                        <input type="text" value="<%= product.description %>" name="description" id="product-description" class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                      </div>
+                      
                     <div class="mb-4">
                         <label for="Price" class="block text-gray-300">Price:</label>
                         <input type="Price" name="price" value="<%= product.price %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
@@ -38,6 +44,22 @@
                     <div class="mb-4">
                         <label for="text" class="block text-gray-300">Color:</label>
                         <input type="text" name="color" value="<%= product.color %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="text" class="block text-gray-300">Ram:</label>
+                        <input type="text" name="Ram" value="<%= product.Ram %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="text" class="block text-gray-300">brand:</label>
+                        <input type="text" name="brand" value="<%= product.brand %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="text" class="block text-gray-300">camera:</label>
+                        <input type="text" name="camera" value="<%= product.camera %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="text" class="block text-gray-300">storage:</label>
+                        <input type="text" name="storage" value="<%= product.storage %>" class="bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 w-full" required>
                     </div>
                     <div class="mb-4">
                         <label class="block text-gray-600 font-semibold mb-2">Existing Images:</label>

@@ -78,6 +78,10 @@ const signupschema = new mongoose.Schema({
   },
   address:[addressSchema],
   wishlist: [wishlistItemSchema],
+  wallet: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Wallet',
+  },
  
 });
 

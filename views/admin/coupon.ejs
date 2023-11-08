@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
+    <title>coupon</title>
+</head>
+<header>
+    <%- include('../partial/adminheader.ejs') %>
+</header>
+
+<body>
+
+
+
+    <!-- Modal Container (Initially Hidden) -->
+    <div id="coupon-modal"
+        class="fixed inset-0 z-50 hidden overflow-y-auto bg-black bg-opacity-60 flex items-center justify-center">
+        <div class="bg-gray-900 max-w-lg p-4 rounded-md">
+            <h1 class="text-3xl font-semibold mb-4 text-white">Create a New Coupon</h1>
+            <form action="/CreateCoupon" method="POST">
+                <div class="mb-4">
+                    <label for="coupon-code" class="block text-sm font-medium text-white">Coupon Code</label>
+                    <input type="text" name="couponcode" id="coupon-code"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label for="discount-amount" class="block text-sm font-medium text-white">Discount Amount
+                        (%)</label>
+                    <input type="number" name="discountamount" id="discount-amount"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label for="discount-amount" class="block text-sm font-medium text-white">minimumpurchase</label>
+                    <input type="number" name="minimumpurchase" id="discount-amount"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label for="expiration-date" class="block text-sm font-medium text-white">Expiration Date</label>
+                    <input type="date" name="expirationdate" id="expiration-date"
+                        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="text-center">
+                    <button type="submit"
+                        class="px-6 py-3 text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Create
+                        Coupon</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <main class="grid min-h-full  mt-20  min-w-full place-items-center bg-gray-900">
+        <div class="flex space-x-6">
+            <% coupons.forEach((coupon, index)=> { %>
+                <div class="relative h-72  w-60 rotate-6">
+                    <div
+                        class="absolute left-1/2 top-1/2  h-96 w-60 -translate-x-1/2 -translate-y-1/2 rotate-6 rounded-2xl bg-gray-400">
+                    </div>
+                    <div
+                        class="absolute inset-0 ring-1  ring-gray-900/5 rounded-2xl leading-none p-6 space-y-6 transform hover:rotate-0 transition-transform duration-300">
+                        <div
+                            class="absolute left-1/2 top-1/2  h-96 w-60 -translate-x-1/2 -translate-y-1/2 rotate-6 space-y-6 rounded-2xl bg-gray-100 p-6 transition duration-300 hover:rotate-0">
+                            <div class="flex justify-end">
+                                <div class="h-4 w-4 rounded-full bg-gray-900"></div>
+                            </div>
+                            <% const formattedDate=coupon.expirationDate.toLocaleDateString(); %>
+                                <p class="text-center text-gray-600">Expiry Date</p>
+                                <header class="text-center text-xl font-extrabold text-gray-600">
+                                    <%= formattedDate %>
+                                </header>
+
+                                <div>
+                                    <p class="text-center text-5xl font-extrabold text-gray-900">Coupons</p>
+                                    <p class="text-center text-4xl font-extrabold text-[#FE5401]"><%= coupon.discountAmount%>% Discount</p>
+                                </div>
+
+                                <footer class="mb-10 flex justify-center">
+                                    <button
+                                        class="flex items-baseline gap-2 rounded-lg bg-[#FE5401] px-4 py-2.5 text-xl font-bold text-white hover:bg-[#FF7308]"
+                                        onclick="copyCouponCode('<%= coupon.couponCode %>')">
+                                        <span>Copy Code</span>
+                                        <i class="fas fa-copy text-xl"></i>
+                                    </button>
+                                </footer>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+    </main>
+
+    <div class="flex justify-center mt-28">
+        <button id="open-modal-button"
+            class="px-6 py-3 text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">
+            Create Coupon</button>
+    </div>
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+
+function copyCouponCode(code) {
+        const tempInput = document.createElement('input');
+        tempInput.value = code;
+        document.body.appendChild(tempInput);
+
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999)
+
+        document.execCommand('copy');
+        
+        document.body.removeChild(tempInput);
+
+        Toastify({
+            text: `code copied`,
+            duration: 3000,
+            gravity: 'bottom',
+            position: 'center',
+            backgroundColor: 'orange',
+          }).showToast();
+    }
+
+    const openModalButton = document.getElementById('open-modal-button');
+    const couponModal = document.getElementById('coupon-modal');
+
+    openModalButton.addEventListener('click', () => {
+        couponModal.classList.remove('hidden');
+    });
+
+    couponModal.addEventListener('click', (e) => {
+        if (e.target === couponModal) {
+            couponModal.classList.add('hidden');
+        }
+    });
+</script>
+
+</html>

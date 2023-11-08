@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
     <title>Checkout</title>
     <style>
         .loading-container {
@@ -218,6 +219,13 @@
                                     class="text-green-600">Free</span></td>
                         </tr>
                     </tbody>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">Coupon Code</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <input type="password" id="coupon-code"
+                                class="w-full p-2 border rounded-md dark:bg-gray-200 dark:border-gray-300 dark:text-black">
+                        </td>
+                    </tr>
                     <tfoot>
                         <tr>
                             <td
@@ -230,6 +238,12 @@
                         </tr>
                     </tfoot>
                 </table>
+                <div class="mt-4 flex justify-center">
+                    <button id="redeem-coupon" type="button"
+                        class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:ring focus:ring-blue-500 focus:outline-none">
+                        Redeem Coupon
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -355,7 +369,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-                        Small modal
+                        Payment Methods
                     </h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -385,9 +399,8 @@
                         </div>
 
                         <div class="flex items-center">
-                            <input type="radio" id="cardsRadio" name="paymentOption" value="cards">
-                            <label for="cardsRadio" class="ml-2 text-gray-900 dark:text-gray-300">Credit/Debit
-                                Cards</label>
+                            <input type="radio" id="walletRadio" name="paymentOption" value="cards">
+                            <label for="walletRadio" class="ml-2 text-gray-900 dark:text-gray-300">Wallet</label>
                         </div>
                     </div>
                 </div>
@@ -465,15 +478,14 @@
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
 <script>
-    // Replace with your actual Razorpay key_id
     const razorpayKey = 'rzp_test_eKsmdHCxXqAJL5';
     const tdElement = document.getElementById('formattedFinalTotal');
     const formattedFinalTotal = tdElement.getAttribute('data-formattedFinalTotal');
-
     const requestData = {
         amount: formattedFinalTotal,
         productid: null,
@@ -494,6 +506,7 @@
 
     // Event listener for the payment button
     document.getElementById('upiRadio').addEventListener('change', () => {
+        console.log("formattedFinalTotal", formattedFinalTotal);
         showLoadingSpinner()
         fetch('/createOrder', {
             method: 'POST',
@@ -516,14 +529,16 @@
                     handler: function (response) {
 
                         Swal.fire({
-                            position: 'center', // Center the modal
+                            position: 'center',
                             icon: 'success',
                             title: 'Payment successful! Payment ID: ' + response.razorpay_payment_id,
                             showConfirmButton: false,
                             timer: 1500
                         })
                             .then((result) => {
-                                window.location.href = '/confirmorder';
+                                const encodedFormattedAmount = encodeURIComponent(requestData.amount);
+                                console.log('formattedFinalTotal', formattedFinalTotal, 'encodedFormattedAmount', encodedFormattedAmount);
+                                window.location.href = `/confirmorder?formattedAmount=${encodedFormattedAmount}`;
                             })
 
                     },
@@ -547,6 +562,63 @@
                 rzp.open({});
 
             });
+    });
+</script>
+<script>
+    const walletRadio = document.getElementById('walletRadio');
+
+    walletRadio.addEventListener('change', function () {
+        if (walletRadio.checked) {
+
+            fetch('/walletpayment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    hideLoadingSpinner();
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Do you want to place the order',
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            },
+                            customClass: {
+                                title: 'green-title'
+                            }
+                        })
+                            .then((result) => {
+                                const encodedFormattedAmount = encodeURIComponent(requestData.amount);
+                                console.log('formattedFinalTotal', formattedFinalTotal, 'encodedFormattedAmount', encodedFormattedAmount);
+                                window.location.href = `/confirmorder?formattedAmount=${encodedFormattedAmount}`;
+                            })
+                    } else {
+                        Swal.fire({
+                            title: 'you dont have enough balace in wallet',
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            },
+                            customClass: {
+                                title: 'red-title'
+                            }
+                        }).then((result) => {
+                            window.location.href = '/checkout';
+
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
     });
 </script>
 
@@ -579,14 +651,16 @@
                         }
                     })
                         .then((result) => {
-                            window.location.href = '/confirmorder';
+                            const encodedFormattedAmount = encodeURIComponent(requestData.amount);
+                            console.log('formattedFinalTotal', formattedFinalTotal, 'encodedFormattedAmount', encodedFormattedAmount);
+                            window.location.href = `/confirmorder?formattedAmount=${encodedFormattedAmount}`;
                         })
                 } else {
                     throw new Error("Network response was not ok");
                 }
             })
             .then(data => {
-                console.log(data);
+                console.log('data cod', data);
             })
             .catch(error => {
                 console.error("Fetch error:", error);
@@ -594,7 +668,74 @@
     });
 </script>
 
+<script>
+    const redeemCouponButton = document.getElementById('redeem-coupon');
+    const telement = document.getElementById('formattedFinalTotal')
+    const totalamount = telement.getAttribute('data-formattedFinalTotal')
 
+
+    redeemCouponButton.addEventListener('click', async () => {
+        const couponCode = document.getElementById('coupon-code').value;
+
+        try {
+            const response = await fetch('/RedeemCoupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ couponCode }),
+            });
+
+            if (response.ok) {
+                const { discountAmount, minimumPurchase } = await response.json();
+                const numericValue = parseFloat(totalamount.replace(/[^0-9.]/g, '')).toFixed(2);
+                console.log('totalamount:', typeof (numericValue), 'minimumPurchase', typeof (minimumPurchase));
+                const discount = (numericValue * discountAmount) / 100;
+                const inramount = numericValue - discount
+                const formattedInramount = new Intl.NumberFormat('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                }).format(inramount);
+                const num = parseInt(numericValue)
+                const min = parseInt(minimumPurchase)
+                if (num > min) {
+
+                    telement.textContent = formattedInramount
+                    requestData.amount = formattedInramount;
+                    telement.setAttribute('data-formattedFinalTotal', formattedInramount);
+                    Toastify({
+                        text: `coupon redeemed`,
+                        duration: 3000,
+                        gravity: 'bottom',
+                        position: 'center',
+                        backgroundColor: 'green',
+                    }).showToast();
+                } else {
+                    Toastify({
+                        text: `Minimum purchase is ${minimumPurchase}`,
+                        duration: 3000,
+                        gravity: 'bottom',
+                        position: 'center',
+                        backgroundColor: 'orange',
+                    }).showToast();
+                }
+                console.log('response.ok', discount, numericValue);
+            } else {
+                Toastify({
+                    text: `Code is not valid`,
+                    duration: 3000,
+                    gravity: 'bottom',
+                    position: 'center',
+                    backgroundColor: 'red',
+                }).showToast();
+                console.error('Coupon redemption failed');
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    });
+
+</script>
 
 <script>
     function openModal() {

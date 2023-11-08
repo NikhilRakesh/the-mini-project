@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>offers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
+</head>
+<header>
+    <%- include('../partial/userheader.ejs') %>
+</header>
+
+<body>
+    <div class="flex flex-wrap">
+        <div class="w-full sm:w-1/2 bg-teal-400 md:w-1/3 lg:w-1/3 xl:w-1/4 p-4">
+            <img src="uploads/shopping-cart.png" alt="Shopping Cart">
+            <h2 class="text-lg text-white font-semibold">Shopping Discounts</h2>
+            <p class="text-white">Save big on your shopping!</p>
+        </div>
+        <div class="w-full sm:w-1/2 bg-sky-400 md:w-1/3 lg:w-1/3 xl:w-1/4 p-4">
+            <img src="uploads/gift-card.png" alt="Gift Card">
+            <h2 class="text-lg text-white font-semibold">Gift Card Offers</h2>
+            <p class="text-white">Get amazing deals on gift cards.</p>
+        </div>
+        <div class="w-full sm:w-1/2 bg-purple-400 md:w-1/3 lg:w-1/3 xl:w-1/4 p-4">
+            <img src="uploads/coupon.png" alt="Coupons">
+            <h2 class="text-lg text-white font-semibold">Coupon Codes</h2>
+            <p class="text-white">Unlock discounts with coupon codes.</p>
+        </div>
+        <div class="w-full sm:w-1/2 bg-orange-400 md:w-1/3 lg:w-1/3 xl:w-1/4 p-4">
+            <img src="uploads/output-onlinegiftools.gif" alt="Special Offers">
+            <h2 class="text-lg text-white font-semibold">Special Offers</h2>
+            <p class="text-white">Don't miss out on these special deals!</p>
+        </div>
+        <!-- Add more elements as needed -->
+    </div>
+    <section class="bg-blue-900 text-white py-16">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-semibold">Welcome to Our Website</h2>
+            <p class="mt-4 text-lg">Discover our amazing services and products.</p>
+            <a href="/home"
+                class="mt-6 inline-block bg-yellow-500 text-blue-900 font-semibold py-2 px-6 rounded-full hover:bg-yellow-600">Get
+                Started</a>
+        </div>
+    </section>
+
+    <!-- Features section -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-8">Our Features</h2>
+            <div class="flex flex-wrap justify-center -mx-4">
+                <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-blue-500 text-3xl mb-4">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 21L17 13 7 13 7 21"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8H17">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8H12">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8H7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">10% Off All Products</h3>
+                        <p class="text-gray-600">Get 10% off on all products site-wide.</p>
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-green-500 text-3xl mb-4">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">40%+ Discount Coupons</h3>
+                        <p class="text-gray-600">Explore coupons with over 40% discounts.</p>
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-purple-500 text-3xl mb-4">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Seasonal Offers</h3>
+                        <p class="text-gray-600">Enjoy special offers based on the season.</p>
+                    </div>
+                </div>
+                <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-red-500 text-3xl mb-4">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Event-Based Offers</h3>
+                        <p class="text-gray-600">Get exclusive discounts for special events.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-8">Available Coupons</h2>
+            <div class="flex flex-wrap justify-center -mx-4">
+                <% coupons.forEach((element , index) => { %>
+                <div class=" w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 mb-8" id="coupon<%= index %>" >
+                    <div class="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:-translate-y-2">
+                        <div class="text-blue-500 text-3xl mb-4">
+                            <!-- Your animated SVG image goes here -->
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2 L14 8 L20 8 L15 12 L17 18 L12 14 L7 18 L9 12 L4 8 L10 8 Z"
+                                    stroke-width="3" fill="none" transform="rotate(0 12 12)">
+                                    <animateTransform attributeName="transform" attributeType="XML" type="rotate"
+                                        from="0 12 12" to="360 12 12" dur="2s" repeatCount="indefinite" />
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Coupon 1</h3>
+                        <p class="text-gray-600">Get <%= element.discountAmount %>% off on your next purchase with this coupon.</p>
+
+                        <!-- Expiry date and copy button -->
+                        <div class="text-gray-500 text-sm my-4">
+                            <p>Expires on: <%= element.expirationDate.toLocaleDateString() %></p>
+                            <button
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full" type="button" onclick="copyCouponCode('<%= element.couponCode %>')" >Copy
+                                Code</button>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+
+
+
+</body>
+<footer class="mt-5">
+    <%- include('../partial/userfooter.ejs') %>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
+     function copyCouponCode(code) {
+        const tempInput = document.createElement('input');
+        tempInput.value = code;
+        document.body.appendChild(tempInput);
+
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999);
+
+        document.execCommand('copy');
+
+        document.body.removeChild(tempInput);
+
+        Toastify({
+            text: `code copied`,
+            duration: 3000,
+            gravity: 'bottom',
+            position: 'center',
+            backgroundColor: 'orange',
+        }).showToast();
+    }
+
+    const openModalButton = document.getElementById('open-modal-button');
+    const couponModal = document.getElementById('coupon-modal');
+
+    openModalButton.addEventListener('click', () => {
+        couponModal.classList.remove('hidden');
+    });
+
+    couponModal.addEventListener('click', (e) => {
+        if (e.target === couponModal) {
+            couponModal.classList.add('hidden');
+        }
+    });
+</script>
+
+</html>

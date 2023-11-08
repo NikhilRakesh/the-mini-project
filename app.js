@@ -3,6 +3,8 @@ const app = express()
 const userrouter = require('./routes/userrouter')
 const adminrouter = require('./routes/adminrouter')
 const productrouter = require('./routes/productrouter')
+const couponrouter = require('./routes/couponrouter')
+const walletrouter = require('./routes/walletrouter')
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -42,6 +44,9 @@ app.use(noCacheMiddleware);
 app.use('/',productrouter)
 app.use('/',userrouter)
 app.use('/',adminrouter)
+app.use('/',couponrouter)
+app.use('/',walletrouter)
+
 
 
 mongoose.connect(dbURI, {

@@ -41,6 +41,19 @@ const productSchema = new mongoose.Schema({
   count: {
     type: Number,
     min: 0,
+  },
+  Ram: {
+    type: String,
+  },
+  camera: {
+    type: String,
+    default: '4',
+  },
+  brand : {
+    type: String,
+  },
+  storage: {
+    type: String,
   }
  
 });

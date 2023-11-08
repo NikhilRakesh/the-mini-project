@@ -39,7 +39,9 @@
                 <!-- Example row for a wishlist product -->
                 <tr class="border-b hover:bg-gray-100">
                   <td class="px-6 py-4">
-                    <img src="<%= product.productId.imageUrl[3] %>" alt="Product Image" class="w-16 h-16 object-cover">
+                    <a href="/userssingleproduct?id=<%= product.productId.id %>">
+                      <img src="<%= product.productId.imageUrl[3] %>" alt="Product Image" class="w-16 h-16 object-cover">
+                    </a>
                   </td>
                   <td class="px-6 py-4">
                     <p class="text-sm font-medium text-gray-900"><%= product.productId.name %></p>
@@ -116,11 +118,10 @@
 
 </div>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
-    
 </body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
   function removeFromWishlist(productId) {
     fetch(`/wishlist/${productId}`, {

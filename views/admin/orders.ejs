@@ -43,55 +43,52 @@
             </thead>
 
             <% let counter=1; %>
-                    <% orders.forEach(order=> { %>
-                        <tbody class="border-b dark:border-gray-700">
-                            <% order.products.forEach(product=> { %>
-                                    <tr class="bg-white  dark:bg-gray-800  hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td class="w-32 p-4">
-                                            <img data-id="<%= order._id %>" data-adres="<%=order.shippingAddress %>"
-                                                data-price="<%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                <% orders.forEach(order=> { %>
+                    <tbody class="border-b dark:border-gray-700">
+                        <% order.products.forEach(product=> { %>
+                            <tr class="bg-white  dark:bg-gray-800  hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td class="w-32 p-4">
+                                    <img data-id="<%= order._id %>" data-adres="<%=order.shippingAddress %>" data-price="<%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
                                         }).format(product.price) %>"
-                                                data-date="<%= order.orderDate.toISOString().split('T')[0] %>"
-                                                data-status="<%= order.status %>"
-                                                data-username="<%= order.customerName %>"
-                                                data-image="<%= product.imageUrl[3]%> %>"
-                                                data-quantity="<%=product.quantity %>"
-                                                data-productname="<%= product.productName %>" class="openModalButton"
-                                                src="<%=product.imageUrl[3]%>" alt="Apple Watch">
-                                        </td>
-                                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                            <%= product.productName %>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center space-x-3">
+                                        data-date="<%= order.orderDate.toISOString().split('T')[0] %>"
+                                        data-status="<%= order.status %>" data-username="<%= order.customerName %>"
+                                        data-image="<%= product.imageUrl[3]%> %>" data-quantity="<%=product.quantity %>"
+                                        data-productname="<%= product.productName %>" class="openModalButton"
+                                        src="<%=product.imageUrl[3]%>" alt="Apple Watch">
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                    <%= product.productName %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center space-x-3">
 
-                                                <div class="orderdetails">
-                                                    <input type="number" name="quantity<% counter++ %>"
-                                                        class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                        placeholder=" <%= product.quantity %>" required>
-                                                </div>
+                                        <div class="orderdetails">
+                                            <input type="number" name="quantity<% counter++ %>"
+                                                class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder=" <%= product.quantity %>" required>
+                                        </div>
 
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
-                                                }).format(product.price) %>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <%= order.orderDate.toISOString().split('T')[0] %>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <%= order.customerName %>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <span class="statusCell" data-product-id="<%= order._id %>">
-                                                <%= order.status %>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                        </tbody>
-                        <% }); %>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                                    <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                        }).format(product.price) %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <%= order.orderDate.toISOString().split('T')[0] %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <%= order.customerName %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="statusCell" data-product-id="<%= order._id %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                    <% }); %>
 
         </table>
     </div>
@@ -212,20 +209,40 @@
 
             const orderStatusSelect = document.getElementById('orderStatusSelect');
 
+            if (orderStatus.textContent === 'Delivered') {
+                orderStatusSelect.style.display = 'none';
+            } else if (orderStatus.textContent === 'Canceled'){
+                orderStatusSelect.style.display = 'none';
+            }else if (orderStatus.textContent === 'Order return'){
+                orderStatusSelect.style.display = 'none';
+            } else {
+                orderStatusSelect.style.display = 'block';
+            }
+
             orderStatusSelect.addEventListener('input', function () {
+
                 const selectedStatus = orderStatusSelect.value;
                 console.log('selectedStatus', selectedStatus);
                 document.getElementById('orderStatus').textContent = selectedStatus;
+                
+
+                if (selectedStatus === 'Delivered') {
+                    orderStatusSelect.style.display = 'none';
+                } else {
+                    orderStatusSelect.style.display = 'block';
+                }
 
                 const statusCells = document.querySelectorAll(`.statusCell[data-product-id="${button.dataset.id}"]`);
                 statusCells.forEach(statusCell => {
                     statusCell.textContent = selectedStatus;
                 });
 
-                const orderId = id_order.value 
-                console.log(' const id_order',orderId);
+                const orderId = id_order.value
+                console.log(' const id_order', orderId);
 
                 const cancelOrderUrl = `/cancelorder?orderId=${orderId}&status=${selectedStatus}`;
+
+
 
                 fetch(cancelOrderUrl, {
                     method: 'GET',

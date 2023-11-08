@@ -1,3 +1,5 @@
-<button class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
-    Unlist Product
-</button>
+<li>
+    <a href="/offerPage" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 text-black" aria-current="page">
+        <img src="path-to-your-animated-gif.gif" alt="Offers" class="w-6 h-6 md:w-8 md:h-8" />
+    </a>
+</li>
