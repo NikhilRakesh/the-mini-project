@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
     <link href="/dist/output.css" rel="stylesheet">
     <title>Document</title>
 </head>
@@ -43,15 +44,7 @@
 
                                 <p class="text-gray-700">
                                 <div class="flex justify-center w-1/5">
-                                    <% if (cartItem.quantity==1) { %>
-                                        <% console.log('cart',cartItem.quantity); %>
-                                            <button id="mybutton">
-                                                <svg class="fill-current  text-gray-600 w-3" viewBox="0 0 448 512">
-                                                    <path
-                                                        d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-                                                </svg>
-                                            </button>
-                                            <% } else { %>
+                                    
                                                 <% console.log('else',cartItem.quantity); %>
                                                     <button id="decrementButton" data-user-id="<%= user._id %>"
                                                         data-product-id="<%= cartItem.productId._id %>">
@@ -63,7 +56,7 @@
                                                         </svg>
 
                                                     </button>
-                                                    <% } %>
+                                                   
                                                         <input class="mx-2 border text-center  w-8 idclass"
                                                             type="button" id="quantity_<%= cartItem.productId._id %>"
                                                             value="<%= cartItem.quantity %>">
@@ -152,6 +145,7 @@
 
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <script>
 
@@ -176,6 +170,10 @@
                 const price = parseFloat(priceElement.getAttribute('data-price'));
                 const toatalprice = totalSpan.textContent
                 const formatedTotalprice = parseFloat(toatalprice.replace(/[^0-9.-]+/g, ''))
+                
+                let newValue = 1
+                if(quantity>1){
+                
                 const totalPrice = formatedTotalprice - price
                 const formattedTotalPrice = new Intl.NumberFormat('en-IN', {
                     style: 'currency',
@@ -204,10 +202,9 @@
 
 
 
-                let newValue = 1
-                if(quantity>1){
+               
                     newValue = quantity - 1
-                }
+                
 
 
                 console.log(`it is ${newValue}`)
@@ -220,7 +217,7 @@
                     saveElement.textContent = `You will save ${formateddiscountAmount} on this order`;
                 }
 
-                if(quantity>1){
+                
 
                     fetch(`/decreaseQuantity/${userId}/${productId}`, { method: 'GET' })
                         .then(response => {
@@ -241,7 +238,7 @@
                         .catch(error => {
                             console.error(error);
                         });
-                }
+                    }
 
             });
         });
@@ -320,7 +317,19 @@
                 fetch(`/addtocart/${userId}/${productId}`, { method: 'GET' })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            if(response.status === 400){
+                                console.log('count 400');
+                                Toastify({
+                                    text: 'Stock quantity exeeds',
+                                    duration: 3000,
+                                    gravity: 'bottom',
+                                    position: 'center',
+                                    backgroundColor: 'red',
+                                }).showToast();
+                            }else {
+
+                                throw new Error('Network response was not ok');
+                            }
                         }
                         const contentType = response.headers.get('content-type');
                         if (contentType && contentType.includes('application/json')) {

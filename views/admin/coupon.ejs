@@ -21,7 +21,7 @@
         class="fixed inset-0 z-50 hidden overflow-y-auto bg-black bg-opacity-60 flex items-center justify-center">
         <div class="bg-gray-900 max-w-lg p-4 rounded-md">
             <h1 class="text-3xl font-semibold mb-4 text-white">Create a New Coupon</h1>
-            <form action="/CreateCoupon" method="POST">
+            <form  action="/CreateCoupon" method="POST">
                 <div class="mb-4">
                     <label for="coupon-code" class="block text-sm font-medium text-white">Coupon Code</label>
                     <input type="text" name="couponcode" id="coupon-code"
@@ -42,7 +42,8 @@
                     <label for="expiration-date" class="block text-sm font-medium text-white">Expiration Date</label>
                     <input type="date" name="expirationdate" id="expiration-date"
                         class="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                </div>
+                    <small id="expiration-error" class="text-red-500"></small>
+                </div>                
                 <div class="text-center">
                     <button type="submit"
                         class="px-6 py-3 text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md focus:ring focus:ring-blue-500 focus:outline-none">Create
@@ -76,7 +77,9 @@
 
                                 <div>
                                     <p class="text-center text-5xl font-extrabold text-gray-900">Coupons</p>
-                                    <p class="text-center text-4xl font-extrabold text-[#FE5401]"><%= coupon.discountAmount%>% Discount</p>
+                                    <p class="text-center text-4xl font-extrabold text-[#FE5401]">
+                                        <%= coupon.discountAmount%>% Discount
+                                    </p>
                                 </div>
 
                                 <footer class="mb-10 flex justify-center">
@@ -104,9 +107,12 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+
+
 <script>
 
-function copyCouponCode(code) {
+
+    function copyCouponCode(code) {
         const tempInput = document.createElement('input');
         tempInput.value = code;
         document.body.appendChild(tempInput);
@@ -115,7 +121,7 @@ function copyCouponCode(code) {
         tempInput.setSelectionRange(0, 99999)
 
         document.execCommand('copy');
-        
+
         document.body.removeChild(tempInput);
 
         Toastify({
@@ -124,7 +130,7 @@ function copyCouponCode(code) {
             gravity: 'bottom',
             position: 'center',
             backgroundColor: 'orange',
-          }).showToast();
+        }).showToast();
     }
 
     const openModalButton = document.getElementById('open-modal-button');

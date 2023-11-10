@@ -19,6 +19,12 @@ const CreateCoupon = async (req, res) => {
     try {
         console.log('body', req.body);
         const { couponcode, discountamount, expirationdate, minimumpurchase } = req.body;
+        const currentDate = new Date();
+        const selectedDate = new Date(expirationdate);
+
+        if (selectedDate <= currentDate) {
+            return res.status(400).send('Expiration date must be in the future.');
+        }
 
         const newCoupon = new couponSchema({
             couponCode: couponcode,
@@ -28,7 +34,7 @@ const CreateCoupon = async (req, res) => {
         });
 
         await newCoupon.save();
-        res.redirect('back')
+        res.redirect('/couponpage')
 
     } catch (error) {
         console.error('Error during CreateCoupon:', error);

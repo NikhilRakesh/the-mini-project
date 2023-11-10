@@ -71,7 +71,7 @@
             <div>
                 <h3 class="text-2xl font-bold mb-2">Transaction History</h3>                                 
                 <ul>
-                    <% transactions.forEach(transaction => { %>
+                    <% transactions.reverse().forEach(transaction => { %>
                         <li class="flex items-center justify-between mb-2">
                             <div class="flex items-center">
                                 <% if(transaction.type == 'credit'){ %>

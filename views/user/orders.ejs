@@ -54,43 +54,44 @@
                             <th class="px-4 py-2">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="orderHistoryTable">
-                        <% orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
-                            orders.forEach(order=> { %>
-                                <% order.products.forEach(product=> { %>
-                                    <tr>
-                                        <td class="px-4 py-2">
-                                            <%= order.orderDate.toISOString().split('T')[0] %>
-                                        </td>
-                                        <td class="px-4 py-2">
-                                            <%= product.productName %>
-                                        </td>
-                                        <td data-product-id="<%=product.productName %>" data-order-id="<%= order._id %>"
-                                            data-username="<%=user.username %>" data-image="<%= product.imageUrl[3] %>"
-                                            data-price="<%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                    <% orders.sort((a, b)=> new Date(b.orderDate) - new Date(a.orderDate))
+                        orders.forEach(order=> { %>
+                        <tbody id="orderHistoryTable" class="border border-gray-300">
+                            <% order.products.forEach(product=> { %>
+                                <tr class="">
+                                    <td class="px-4 py-2">
+                                        <%= order.orderDate.toISOString().split('T')[0] %>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <%= product.productName %>
+                                    </td>
+                                    <td data-product-id="<%=product.productName %>" data-order-id="<%= order._id %>"
+                                        data-username="<%=user.username %>" data-image="<%= product.imageUrl[3] %>"
+                                        data-price="<%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
                                         }).format(order.totalPrice) %>" data-quantity="<%=product.quantity %>"
-                                            data-date=" <%= order.orderDate.toISOString().split('T')[0] %>"
-                                            data-status=" <%= order.status %>" data-adress="<%=order.shippingAddress %>"
-                                            class=" openModal px-4 py-2"><img src="<%= product.imageUrl[3] %>"
-                                                alt="Product Image" class="w-12 h-12">
+                                        data-date=" <%= order.orderDate.toISOString().split('T')[0] %>"
+                                        data-status=" <%= order.status %>" data-adress="<%=order.shippingAddress %>"
+                                        class=" openModal px-4 py-2"><img src="<%= product.imageUrl[3] %>"
+                                            alt="Product Image" class="w-12 h-12">
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
+                                            }).format(order.totalPrice) %>
+                                    </td>
+                                    <% if(order.status==='Canceled' ) {%>
+                                        <td id="orderStatusCell" class="px-4 py-2 text-red-600 ">
+                                            <%=order.status%>
                                         </td>
-                                        <td class="px-4 py-2">
-                                            <%= new Intl.NumberFormat('en-IN', { style: 'currency' , currency: 'INR'
-                                                }).format(order.totalPrice) %>
-                                        </td>
-                                        <% if(order.status==='Canceled' ) {%>
-                                            <td id="orderStatusCell" class="px-4 py-2 text-red-600 ">
+                                        <% }else if(order.status==='Delivered' ){ %>
+                                            <td id="orderStatusCell" class="px-4 py-2 text-green-600">
                                                 <%=order.status%>
                                             </td>
-                                            <% }else if(order.status==='Delivered' ){ %>                       
-                                                <td id="orderStatusCell" class="px-4 py-2 text-green-600">
+                                            <% }else if(order.status==='Shipped' ){ %>
+                                                <td id="orderStatusCell" style="color: orange;"
+                                                    class="px-4 py-2 text-orange-300-700">
                                                     <%=order.status%>
                                                 </td>
-                                                <% }else if(order.status==='Shipped' ){ %>
-                                                    <td id="orderStatusCell" style="color: orange;" class="px-4 py-2 text-orange-300-700">
-                                                        <%=order.status%>
-                                                    </td>
-                                                    <% }else if(order.status==='Order return' ){ %>
+                                                <% }else if(order.status==='Order return' ){ %>
                                                     <td id="orderStatusCell" class="px-4 py-2 text-red-500">
                                                         <%=order.status%>
                                                     </td>
@@ -99,10 +100,10 @@
                                                             <%=order.status%>
                                                         </td>
                                                         <% } %>
-                                    </tr>
+                                </tr>
+                                <% }); %>
                                     <% }); %>
-                                        <% }); %>
-                    </tbody>
+                        </tbody>
 
                 </table>
             </div>
@@ -125,6 +126,10 @@
                 <div class="modal-content py-4 text-left px-6">
                     <h2 class="text-2xl font-semibold text-gray-800">Order Details</h2>
                     <div class="my-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Order id:</span>
+                            <span id="Orderid" class="text-gray-900">123 Main St, City, Country</span>
+                        </div>
                         <div class="flex justify-between">
                             <span class="text-gray-700">Full Address:</span>
                             <span id="fullAddress" class="text-gray-900">123 Main St, City, Country</span>
@@ -180,7 +185,7 @@
         </div>
 
     </main>
-    
+
 
 </body>
 <footer class="mt-5">
@@ -194,6 +199,7 @@
 
     const productname = document.getElementById('productName')
     const username = document.getElementById('userName')
+    const id = document.getElementById('Orderid')
     const adress = document.getElementById('fullAddress')
     const productimage = document.getElementById('productImage')
     const orderdate = document.getElementById('orderDate')
@@ -215,6 +221,7 @@
             const Orderstatus = element.getAttribute('data-status')
             const Price = element.getAttribute('data-price')
             const Quantity = element.getAttribute('data-quantity')
+            const orderId = element.getAttribute('data-order-id');
 
             productname.textContent = productName
             username.textContent = userName
@@ -228,7 +235,8 @@
             orderstatus.textContent = Orderstatus
             price.textContent = Price
             quantity.textContent = Quantity
-
+            id.textContent = orderId
+            
             if (orderstatus.textContent.trim() === 'Canceled') {
                 orderstatus.style.color = 'red';
             } else if (orderstatus.textContent.trim() === 'Delivered') {
@@ -247,7 +255,6 @@
                 cancelOrderButton.style.display = 'block';
 
                 cancelOrderButton.addEventListener('click', function () {
-                    const orderId = element.getAttribute('data-order-id');
 
                     const selectedStatus = 'Canceled'
 

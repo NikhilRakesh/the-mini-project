@@ -77,23 +77,69 @@
             </div>
         </div>
     </div>
-<div class="flex justify-between">
+    <!-- <button id="showModalButton" class="bg-blue-500 text-white p-2 rounded-lg">Show Date Filter</button> -->
 
-    <div class="text-center">
-        <button id="downloadMonthlyExcelReport" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
-            Download Excel Report
-        </button>
-    </div>
-    <div class="text-center">
-        <button id="downloadReportButton"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Download Sales Report</button>
+    <div class="flex justify-between">
+
+        <div class="text-center">
+            <button id="showModalButton"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
+                Download Excel Report
+            </button>
+        </div>
+        <div class="text-center">
+            <button id="downloadReportButton"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Download Sales
+                Report</button>
+        </div>
+    </div>               
+</section>
+
+<div id="dateFilterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-gray-800 p-4 rounded-lg shadow-lg">
+        <h2 class="text-lg font-semibold mb-4">Select Date Range</h2>                                     
+        <div class="flex space-x-4  mb-4">
+            <input type="date"  id="startDate" class="border bg-gray-600 rounded-lg p-2 ">
+            <input type="date" id="endDate" class="border bg-gray-600 rounded-lg p-2">
+        </div>
+        <div class="flex justify-end">
+            <button id="downloadMonthlyExcelReport" class="bg-blue-500 text-white p-2 rounded-lg">Apply Filter</button>
+            <button id="closeModal" class="bg-gray-300 p-2 rounded-lg ml-2">Close</button>
+        </div>
     </div>
 </div>
-</section>
+
 
 
 <script src="/javascript/banner.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const dateFilterModal = document.getElementById('dateFilterModal');
+    const showModalButton = document.getElementById('showModalButton');
+    const closeModalButton = document.getElementById('closeModal');
+
+    showModalButton.addEventListener('click', () => {
+        dateFilterModal.classList.remove('hidden');
+    });
+
+    closeModalButton.addEventListener('click', () => {
+        dateFilterModal.classList.add('hidden');
+    });
+
+    const applyFilterButton = document.getElementById('applyFilter');
+    applyFilterButton.addEventListener('click', () => {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        // You can use startDate and endDate for your date filter logic here
+        // For example, send an API request with these dates to fetch sales data
+        console.log('Selected Date Range:', startDate, endDate);
+
+        // Close the modal
+        dateFilterModal.classList.add('hidden');
+    });
+</script>
+
 
 <script>
     const downloadReportButton = document.getElementById('downloadReportButton');
@@ -114,10 +160,10 @@
                 const reportInfo = JSON.parse(reportFilename);
                 const filename = reportInfo.filename;
                 console.log('filename', filename);
-                 const downloadLink = document.createElement('a');
+                const downloadLink = document.createElement('a');
                 downloadLink.href = `/downloadSalesReport/${filename}`;
                 downloadLink.download = filename;
-                console.log(' downloadLink.href',downloadLink.download);
+                console.log(' downloadLink.href', downloadLink.download);
                 downloadLink.style.display = 'none';
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
@@ -130,23 +176,25 @@
 </script>
 <script>
     document.getElementById('downloadMonthlyExcelReport').addEventListener('click', () => {
-        fetch('/generateExcelReport', {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        fetch(`/generateExcelReport?startDate=${startDate}&endDate=${endDate}`, {
             method: 'GET',
         })
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = 'monthly_sales_report.xlsx'; 
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => {
-            console.error('Error downloading Monthly Excel report:', error);
-        });
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'monthly_sales_report.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error downloading Monthly Excel report:', error);
+            });
     });
 </script>
 

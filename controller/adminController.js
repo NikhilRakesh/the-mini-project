@@ -15,16 +15,19 @@ const mongoose = require('mongoose');
 
 const generateExcelSalesReport = async (req, res) => {
     try {
-       
+       const endDate = new Date(req.query.endDate)
+       let startDate = new Date(req.query.startDate);
         const startOfMonth = moment().startOf('month');
         const endOfMonth = moment().endOf('month');
+        console.log('startOfMonth',startOfMonth,endOfMonth.toDate());
+
 
         const salesData = await orderSchema.aggregate([
             {
                 $match: {
                     orderDate: {
-                        $gte: startOfMonth.toDate(),
-                        $lte: endOfMonth.toDate(),
+                        $gte: startDate,
+                        $lte: endDate,
                     },
                 },
             },
@@ -80,7 +83,6 @@ const generateExcelSalesReport = async (req, res) => {
             { header: 'Product Name', key: 'productName' },
             { header: 'Order Price', key: 'orderPrice' },
         ];
-console.log('salesData',salesData);
         salesData.forEach(orderData => {
             worksheet.addRow({
                 orderId: orderData.orderId,
@@ -303,7 +305,6 @@ const downloadSalesreport = async (req, res) => {
     try {
         const filename = req.params.filename;
         console.log('filename', filename);
-        // const filePath = path.join(__dirname,'./public/sales_reports',filename); 
         const filePath = `public/sales_reports/${filename}`
         console.log('filePath', filePath);
 
@@ -519,15 +520,26 @@ const deleteCatageory = async (req, res) => {
 
 const orders = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1; 
+        console.log('pageee',page);
+        const itemsPerPage = 10; 
+        console.log('(page - 1) * itemsPerPage',(page - 1) * itemsPerPage);
+
+
+        const totalOrders = await orderSchema.countDocuments({});
+        const totalPages = Math.ceil(totalOrders / itemsPerPage);
 
         const orders = await orderSchema
             .find({})
+            .sort({ orderDate: -1 })
+            .skip((page - 1) * itemsPerPage) 
+            .limit(itemsPerPage);
 
         if (!orders) {
             return res.status(404).json({ message: 'orders not found' });
         }
 
-        res.render('admin/orders', { orders })
+        res.render('admin/orders', { orders,page, totalPages  })
 
     } catch (error) {
         console.error('Error orders:', error);

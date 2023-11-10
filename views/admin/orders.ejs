@@ -41,10 +41,9 @@
                     </th>
                 </tr>
             </thead>
-
             <% let counter=1; %>
                 <% orders.forEach(order=> { %>
-                    <tbody class="border-b dark:border-gray-700">
+                    <tbody class="border-b dark:border-gray-400">
                         <% order.products.forEach(product=> { %>
                             <tr class="bg-white  dark:bg-gray-800  hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td class="w-32 p-4">
@@ -92,70 +91,105 @@
 
         </table>
     </div>
+    <% const minimumItemsPerPage=12; %>
 
-    <section>
-        <div id="myModal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center hidden">
-            <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+        <div class="flex justify-center mb-5 mt-4">
+            <nav aria-label="Page navigation example">
+                <ul class="inline-flex -space-x-px text-sm">
+                    <li>
+                        <% console.log('ejs page',page); %>
+                        <a href="/orders?page=<%= page - 1 %>"
+                            class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover-bg-gray-100 hover-text-gray-700 dark-bg-gray-800 dark-border-gray-700 dark-text-gray-400 dark-hover-bg-gray-700 dark-hover-text-white"
+                           >Previous</a>
+                    </li>
+                    <% console.log('ejs totalpage',totalPages); %>
+                    <% for (let Page=1; Page <=totalPages; Page++) { %>
+                        <li>
+                            <a href="#"
+                                class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover-bg-gray-100 hover-text-gray-700 dark-bg-gray-800 dark-border-gray-700 dark-text-gray-400 dark-hover-bg-gray-700 dark-hover-text-white"
+                                onclick="goToPage('<%= page %>')">
+                                <%= Page %>
+                            </a>
+                        </li>
+                        <% } %>
+                        <% console.log('ejs page',page); %>
 
-            <div
-                class="modal-container bg-gray-800 w-9/12 md:w-1/2 lg:w-3/5 xl:w-1/2 mx-auto my-8 rounded shadow-lg z-50 overflow-y-auto max-h-3/5 text-white">
-
-                <!-- Modal content -->
-                <div class="modal-content py-4 text-left px-6">
-                    <h2 class="text-2xl font-semibold text-gray-200">Order Details</h2>
-                    <div class="my-4">
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">Full Address:</span>
-                            <span id="fullAddress" class="text-gray-100">123 Main St, City, Country</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">User Name:</span>
-                            <span id="userName" class="text-gray-100">John Doe</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">Product Image:</span>
-                            <img id="productImage" src="product_image_url" alt="Product Image" class="w-12 h-12">
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">Product Name:</span>
-                            <span id="productName" class="text-gray-100">Product Name</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">Order Date:</span>
-                            <span id="orderDate" class="text-gray-100">2023-10-18</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">Order Status:</span>
-                            <span id="orderStatus" class="text-gray-100">Pending</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">Price:</span>
-                            <span id="price" class="text-gray-100">$19.99</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-300">Quantity:</span>
-                            <span id="quantity" class="text-gray-100">1</span>
-                        </div>
-                        <div class="flex justify-center mt-4">
-                            <select id="orderStatusSelect"
-                                class="px-4 py-2 text-white bg-gray-700 hover:bg-gray-600 rounded focus:outline-none focus:ring focus:ring-gray-300">
-                                <option value="Pending">Pending</option>
-                                <option value="Shipped">Shipped</option>
-                                <option value="Delivered">Delivered</option>
-                            </select>
-                        </div>
-                        <input type="hidden" id="id_order">
-                    </div>
-                </div>
-
-                <div class="modal-footer flex justify-center py-4 text-right">
-                    <button id="closeModal"
-                        class="px-4 py-2 text-white bg-gray-800 hover:bg-gray-600 rounded focus:outline-none focus:ring focus:ring-gray-300">Close</button>
-                </div>
-            </div>
+                            <li>
+                                <a href="/orders?page=<%= page+1 %>"
+                                    class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover-bg-gray-100 hover-text-gray-700 dark-bg-gray-800 dark-border-gray-700 dark-text-gray-400 dark-hover-bg-gray-700 dark-hover-text-white"
+                                    >Next</a>
+                            </li>
+                </ul>
+            </nav>
         </div>
 
-    </section>
+        <section>
+            <div id="myModal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center hidden">
+                <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+
+                <div
+                    class="modal-container bg-gray-800 w-9/12 md:w-1/2 lg:w-3/5 xl:w-1/2 mx-auto my-8 rounded shadow-lg z-50 overflow-y-auto max-h-3/5 text-white">
+
+                    <!-- Modal content -->
+                    <div class="modal-content py-4 text-left px-6">
+                        <h2 class="text-2xl font-semibold text-gray-200">Order Details</h2>
+                        <div class="my-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Order id:</span>
+                                <span id="Orderid" class="text-gray-100">123 Main St, City, Country</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Full Address:</span>
+                                <span id="fullAddress" class="text-gray-100">123 Main St, City, Country</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">User Name:</span>
+                                <span id="userName" class="text-gray-100">John Doe</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Product Image:</span>
+                                <img id="productImage" src="product_image_url" alt="Product Image" class="w-12 h-12">
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Product Name:</span>
+                                <span id="productName" class="text-gray-100">Product Name</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Order Date:</span>
+                                <span id="orderDate" class="text-gray-100">2023-10-18</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Order Status:</span>
+                                <span id="orderStatus" class="text-gray-100">Pending</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Price:</span>
+                                <span id="price" class="text-gray-100">$19.99</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Quantity:</span>
+                                <span id="quantity" class="text-gray-100">1</span>
+                            </div>
+                            <div class="flex justify-center mt-4">
+                                <select id="orderStatusSelect"
+                                    class="px-4 py-2 text-white bg-gray-700 hover:bg-gray-600 rounded focus:outline-none focus:ring focus:ring-gray-300">
+                                    <option value="Pending">Pending</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Delivered">Delivered</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="id_order">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer flex justify-center py-4 text-right">
+                        <button id="closeModal"
+                            class="px-4 py-2 text-white bg-gray-800 hover:bg-gray-600 rounded focus:outline-none focus:ring focus:ring-gray-300">Close</button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
 
 
 </body>
@@ -175,6 +209,7 @@
     const orderStatus = document.getElementById('orderStatus')
     const price = document.getElementById('price')
     const quantity = document.getElementById('quantity')
+    const id = document.getElementById('Orderid')
 
     openModalButtons.forEach(function (button) {
         button.addEventListener('click', function () {
@@ -194,7 +229,7 @@
             const Price = button.getAttribute('data-price')
             const Quantity = button.getAttribute('data-quantity')
 
-
+            id.textContent = id_order.value
             Productname.textContent = productname
             fullAddress.textContent = cleanedString
             userName.textContent = Username
@@ -211,9 +246,9 @@
 
             if (orderStatus.textContent === 'Delivered') {
                 orderStatusSelect.style.display = 'none';
-            } else if (orderStatus.textContent === 'Canceled'){
+            } else if (orderStatus.textContent === 'Canceled') {
                 orderStatusSelect.style.display = 'none';
-            }else if (orderStatus.textContent === 'Order return'){
+            } else if (orderStatus.textContent === 'Order return') {
                 orderStatusSelect.style.display = 'none';
             } else {
                 orderStatusSelect.style.display = 'block';
@@ -224,7 +259,7 @@
                 const selectedStatus = orderStatusSelect.value;
                 console.log('selectedStatus', selectedStatus);
                 document.getElementById('orderStatus').textContent = selectedStatus;
-                
+
 
                 if (selectedStatus === 'Delivered') {
                     orderStatusSelect.style.display = 'none';

@@ -3,6 +3,8 @@ const productSchema = require('../modal/productSchema')
 const orderSchema = require('../modal/orderSchema')
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
+require('dotenv').config();
+
 
 
 const fs = require('fs');
@@ -69,8 +71,8 @@ const generateInvoiceWithPdfKit = (order, newOrder) => {
 
 const Razorpay = require('razorpay');
 const razorpay = new Razorpay({
-    key_id: 'rzp_test_eKsmdHCxXqAJL5',
-    key_secret: '8KDyobfGl0G5LJmXytthke6A',
+    key_id: process.env.razorpay_key_id,
+    key_secret: process.env.razorpay_key_secret,
 });
 
 
@@ -78,10 +80,10 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'luxlifehub3@gmail.com',
-        pass: 'bgnylfhumngvlepd'
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
     }
-});
+}); 
 
 
 const generateOTP = () => {
@@ -92,7 +94,7 @@ const generateOTP = () => {
 const sendVerificationEmail = async (email, otp) => {
     try {
         const mailOptions = {
-            from: 'luxlifehub3@gmail.com',
+            from: process.env.EMAIL,
             to: email,
             subject: 'OTP Verification',
             text: `Your OTP for verification is: ${otp}`
@@ -203,7 +205,6 @@ const otpverify = async (req, res) => {
             console.log('OTP verified successfully');
             return res.redirect(`/home?userId=${user._id}`);
         } else {
-            // If OTP is invalid, expired, or user is not found, delete the user data
             await signupSchema.findByIdAndRemove(userId);
 
             console.error('Invalid OTP or OTP expired');
@@ -540,8 +541,16 @@ const addToCart = async (req, res) => {
         );
 
         if (existingCartItem) {
+            console.log('existingCartItem');
+            if (existingCartItem.quantity + 1 > product.count) {
+                return res.status(400).json({ error: 'Quantity exceeds product count' });
+            }
             existingCartItem.quantity += 1;
         } else {
+            console.log(' not existingCartItem');
+            if (1 > product.count) {
+                return res.status(400).json({ error: 'Quantity exceeds product count' });
+            }
             user.shoppingCart.items.push({
                 productId: productId,
                 quantity: 1,
