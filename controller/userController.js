@@ -255,7 +255,7 @@ const userlogin = async (req, res) => {
         const user = await signupSchema.findOne({ email });
 
         if (!user) {
-            return res.render('user/login', { msg: 'Invalid username and password' });
+            return res.render('user/login', { msg: 'Invalid username and Password' });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
