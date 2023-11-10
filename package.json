@@ -29,8 +29,9 @@
     "uuid": "^9.0.1"
   },
   "scripts": {
-    "start": "concurrently \"npx tailwindcss -i ./public/src/input.css -o ./public/dist/output.css --watch\" \"nodemon app.js\""
-  },
+  "start": "concurrently \"npx tailwindcss -i ./public/src/input.css -o ./public/dist/output.css --watch\" \"nodemon app.js\""
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
