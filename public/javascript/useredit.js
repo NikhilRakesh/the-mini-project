@@ -34,28 +34,22 @@ document.querySelectorAll('[data-modal-toggle="registration-modal"]').forEach((b
     button.addEventListener('click', (event) => {
         const userId = event.currentTarget.getAttribute('data-user-id');
         
-        // Make a fetch request to get user data based on the userId
         fetch(`/api/user/${userId}`)
             .then((response) => response.json())
             .then((userData) => {
-                // Get a reference to the user data container in your modal
                 const userDataContainer = document.getElementById('user-data-container');
 
-                // Clear any previous content
                 userDataContainer.innerHTML = '';
 
-                // Create elements to display user data (e.g., username and email)
                 const usernameElement = document.createElement('p');
                 usernameElement.textContent = `Username: ${userData.username}`;
 
                 const emailElement = document.createElement('p');
                 emailElement.textContent = `Email: ${userData.email}`;
 
-                // Append the elements to the container
                 userDataContainer.appendChild(usernameElement);
                 userDataContainer.appendChild(emailElement);
 
-                // Now, your modal is populated with user data
             })
             .catch((error) => {
                 console.error('Error fetching user data:', error);

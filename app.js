@@ -38,13 +38,13 @@ const noCacheMiddleware = (req, res, next) => {
   res.setHeader('Pragma', 'no-cache');
   next();
 };
-
+   
 app.use(noCacheMiddleware);
 
 app.use('/',productrouter)
 app.use('/',userrouter)
 app.use('/',adminrouter)
-app.use('/',couponrouter)
+app.use('/',couponrouter)  
 app.use('/',walletrouter)
 
 

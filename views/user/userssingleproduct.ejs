@@ -15,13 +15,12 @@
     </title>
 
 </head>
-<% console.log(product.imageUrl); %>
+<header>
+    <%- include('../partial/userheader.ejs') %>
+        <hr class="dark-line">
+</header>
 
     <body class="bg-white-200">
-        <header>
-            <%- include('../partial/userheader.ejs') %>
-                <hr class="dark-line">
-        </header>
 
 
         <section class="py-5">
@@ -31,9 +30,9 @@
                 <!-- Flex container for three columns -->
                 <div class="flex flex-wrap">
                     <!-- First Column -->
-                    <div class="w-full md:w-1/3 md:pr-4">
+                    <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/3 md:pr-4">
                         <!-- Product Images -->
-                        <div id="thumbnailImages" class=" w-14">
+                        <div id="thumbnailImages" class="flex flex-wrap w-14">
                             <div class="thumbnail mb-3">
                                 <img src="<%= product.imageUrl[3] %>" alt="Product Image 1">
                             </div>
@@ -50,7 +49,7 @@
                     </div>
 
                     <!-- Second Column -->
-                    <div style="margin-left: -10rem; margin-right: 5rem;" class="w-full md:w-1/3 md:px-2">
+                    <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/3 md:px-2">
                         <!-- Product Image -->
                         <div id="productView" class=" md:w-1/1">
                             <%= console.log('html image div:', count); %>

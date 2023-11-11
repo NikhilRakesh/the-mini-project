@@ -75,7 +75,7 @@ const generateExcelSalesReport = async (req, res) => {
 
         worksheet.columns = [
             { header: 'Order ID', key: 'orderId' },
-            { header: 'Ordered Address', key: 'orderedAddress.address' },
+            { header: 'Ordered Address', key: 'orderedAddress.address' },   
             { header: 'Ordered City', key: 'orderedAddress.city' },
             { header: 'Ordered State', key: 'orderedAddress.state' },
             { header: 'Ordered Pincode', key: 'orderedAddress.pincode' },
