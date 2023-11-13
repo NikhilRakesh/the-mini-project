@@ -35,7 +35,7 @@ const adminproducts = async (req, res) => {
 
 
 // adding products
-const addProduct = async (req, res) => {
+const  addProduct = async (req, res) => {
     try {
         const { name, description, price, category, color, Storage, Ram, Camera, Brand } = req.body;
         console.log('category', category);

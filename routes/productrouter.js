@@ -6,7 +6,7 @@ const { adminSessionMiddleware }= require('../Middleware/adminAuth')
 const { userSessionMiddleare }= require('../Middleware/userAuth')
 
 
-const multer = require('multer');
+const multer = require('multer'); 
 // multer 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
